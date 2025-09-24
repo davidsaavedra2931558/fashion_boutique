@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FASHION BOUTIQUE - Registro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-black: #1a1a1a;
+            --secondary-black: #2d2d2d;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --accent-gray: #6c757d;
+            --white: #ffffff;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .register-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .register-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .register-header {
+            background-color: var(--primary-black);
+            color: var(--white);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .register-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #ffffff, #cccccc, #ffffff);
+        }
+        
+        .register-header h1 {
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+        
+        .register-header p {
+            opacity: 0.85;
+            margin-bottom: 0;
+            font-size: 15px;
+        }
+        
+        .register-form {
+            padding: 30px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--secondary-black);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            padding: 14px 16px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-black);
+            box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+        }
+        
+        .input-group-text {
+            background-color: var(--white);
+            border: 2px solid var(--medium-gray);
+            border-right: none;
+        }
+        
+        .password-toggle {
+            cursor: pointer;
+            background-color: var(--white);
+            border: 2px solid var(--medium-gray);
+            border-left: none;
+            color: var(--accent-gray);
+        }
+        
+        .btn-register {
+            background-color: var(--primary-black);
+            color: var(--white);
+            border: none;
+            padding: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-register:hover {
+            background-color: var(--secondary-black);
+            transform: translateY(-2px);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--accent-gray);
+            font-size: 14px;
+        }
+        
+        .login-link a {
+            color: var(--primary-black);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .login-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary-black);
+            transition: width 0.3s ease;
+        }
+        
+        .login-link a:hover::after {
+            width: 100%;
+        }
+        
+        .password-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background-color: var(--medium-gray);
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            border-radius: 3px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .form-footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--accent-gray);
+            text-align: center;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #f0f9f0;
+            color: #2e7d32;
+        }
+        
+        .alert-danger {
+            background-color: #fde8e8;
+            color: #c62828;
+        }
+        
+        .alert-info {
+            background-color: #e8f4fd;
+            color: #1565c0;
+        }
+        
+        /* Estilos para el checkbox de términos */
+        .terms-check {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .form-check-input {
+            margin-top: 0.3rem;
+        }
+        
+        .form-check-label {
+            font-size: 14px;
+            color: var(--secondary-black);
+        }
+        
+        .terms-link {
+            color: var(--primary-black);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Modal para términos y condiciones */
+        .terms-modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+        
+        .terms-modal-header {
+            background-color: var(--primary-black);
+            color: var(--white);
+            border-bottom: 1px solid #333;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .terms-modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 25px;
+            background-color: #fcfcfc;
+        }
+        
+        .terms-section {
+            margin-bottom: 20px;
+        }
+        
+        .terms-section h5 {
+            color: var(--primary-black);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .terms-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .register-container {
+                max-width: 100%;
+            }
+            
+            .register-header {
+                padding: 25px 20px;
+            }
+            
+            .register-form {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>FASHION BOUTIQUE</h1>
+            <p>Únete a nuestra comunidad de moda</p>
+        </div>
+        
+        <div class="register-form">
+            <!-- Mostrar mensajes flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
+                <div class="mb-3">
+                    <label for="nameUser" class="form-label">Nombre de usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" class="form-control" id="nameUser" name="nameUser" placeholder="Elige un nombre de usuario" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="emailUser" class="form-label">Correo electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="emailUser" name="emailUser" placeholder="tu.correo@ejemplo.com" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="passwordUser" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="passwordUser" name="passwordUser" placeholder="Crea una contraseña segura" required>
+                        <span class="input-group-text password-toggle" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                    </div>
+                    <div class="password-strength mt-2">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <small class="form-text text-muted" id="passwordHelp">Use 8 o más caracteres con una combinación de letras, números y símbolos</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Repite tu contraseña" required>
+                    </div>
+                    <small class="form-text text-muted" id="confirmPasswordHelp"></small>
+                </div>
+                
+                <!-- Checkbox de términos y condiciones -->
+                <div class="terms-check mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="acceptTerms" name="acceptTerms" required>
+                        <label class="form-check-label" for="acceptTerms">
+                            He leído y acepto los <a href="#" class="terms-link" data-bs-toggle="modal" data-bs-target="#termsModal">Términos y Condiciones</a> y la <a href="#" class="terms-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Política de Privacidad</a>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-register w-100" id="submitButton">
+                    <i class="bi bi-person-plus me-2"></i> CREAR CUENTA
+                </button>
+            </form>
+            
+            <div class="login-link">
+                ¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+            </div>
+            
+            <div class="form-footer">
+               
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Términos y Condiciones -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content terms-modal-content">
+                <div class="modal-header terms-modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones de FASHION BOUTIQUE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body terms-modal-body">
+                    <div class="terms-section">
+                        <h5>1. Aceptación de los Términos</h5>
+                        <p>Al acceder y utilizar los servicios de FASHION BOUTIQUE, usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguna parte de los términos, no podrá utilizar nuestros servicios.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>2. Uso del Servicio</h5>
+                        <p>Usted se compromete a utilizar el servicio de manera legal y ética. No podrá utilizar nuestro sitio para fines ilegales o no autorizados. Es su responsabilidad mantener la confidencialidad de su cuenta y contraseña.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>3. Propiedad Intelectual</h5>
+                        <p>Todo el contenido incluido en este sitio, como textos, gráficos, logotipos, imágenes, así como el software utilizado, es propiedad de FASHION BOUTIQUE y está protegido por las leyes de propiedad intelectual.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>4. Limitación de Responsabilidad</h5>
+                        <p>FASHION BOUTIQUE no será responsable por daños indirectos, incidentales, especiales o consecuentes que resulten del uso o la imposibilidad de uso del servicio.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>5. Modificaciones</h5>
+                        <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación en el sitio.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Política de Privacidad -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content terms-modal-content">
+                <div class="modal-header terms-modal-header">
+                    <h5 class="modal-title" id="privacyModalLabel">Política de Privacidad de FASHION BOUTIQUE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body terms-modal-body">
+                    <div class="terms-section">
+                        <h5>1. Información que Recopilamos</h5>
+                        <p>Recopilamos información que usted nos proporciona directamente, como cuando crea una cuenta, realiza una compra o se comunica con nosotros. Esto puede incluir nombre, dirección de correo electrónico, información de pago y cualquier otra información que decida proporcionar.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>2. Uso de la Información</h5>
+                        <p>Utilizamos la información que recopilamos para proporcionar, mantener y mejorar nuestros servicios, procesar transacciones, enviar notificaciones y personalizar su experiencia.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>3. Compartir Información</h5>
+                        <p>No vendemos ni alquilamos su información personal a terceros. Podemos compartir información con proveedores de servicios que nos ayudan a operar nuestro negocio, siempre que estos proveedores se comprometan a proteger su información.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>4. Seguridad</h5>
+                        <p>Implementamos medidas de seguridad para proteger su información personal contra accesos no autorizados, alteración, divulgación o destrucción.</p>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h5>5. Sus Derechos</h5>
+                        <p>Usted tiene derecho a acceder, corregir o eliminar su información personal. Puede hacerlo accediendo a la configuración de su cuenta o contactándonos directamente.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Funcionalidad para mostrar/ocultar contraseña
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordUser');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const acceptTerms = document.getElementById('acceptTerms');
+            const submitButton = document.getElementById('submitButton');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Cambiar el icono
+                const icon = this.querySelector('i');
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            });
+            
+            // Validación de contraseña
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const strengthBar = document.getElementById('passwordStrengthBar');
+                const helpText = document.getElementById('passwordHelp');
+                
+                // Calcular fortaleza
+                let strength = 0;
+                if (password.length >= 8) strength += 25;
+                if (password.match(/[a-z]+/)) strength += 25;
+                if (password.match(/[A-Z]+/)) strength += 15;
+                if (password.match(/[0-9]+/)) strength += 20;
+                if (password.match(/[!@#$%^&*(),.?":{}|<>]+/)) strength += 15;
+                
+                // Limitar a 100%
+                strength = Math.min(strength, 100);
+                
+                // Actualizar barra
+                strengthBar.style.width = strength + '%';
+                
+                // Cambiar color según fortaleza de contraseña 
+                if (strength < 40) {
+                    strengthBar.style.backgroundColor = '#dc3545'; // Rojo
+                    helpText.textContent = 'Contraseña débil';
+                } else if (strength < 70) {
+                    strengthBar.style.backgroundColor = '#fd7e14'; // Naranja
+                    helpText.textContent = 'Contraseña moderada';
+                } else if (strength < 90) {
+                    strengthBar.style.backgroundColor = '#ffc107'; // Amarillo
+                    helpText.textContent = 'Contraseña buena';
+                } else {
+                    strengthBar.style.backgroundColor = '#198754'; // Verde
+                    helpText.textContent = 'Contraseña fuerte';
+                }
+                
+                // Validar confirmación de contraseña
+                validatePasswordMatch();
+            });
+            
+            // Validar que las contraseñas coincidan
+            confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+            
+            function validatePasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const helpText = document.getElementById('confirmPasswordHelp');
+                
+                if (confirmPassword.length > 0) {
+                    if (password !== confirmPassword) {
+                        helpText.textContent = 'Las contraseñas no coinciden';
+                        helpText.style.color = '#dc3545';
+                    } else {
+                        helpText.textContent = 'Las contraseñas coinciden';
+                        helpText.style.color = '#198754';
+                    }
+                } else {
+                    helpText.textContent = '';
+                }
+            }
+            
+            // Validación del formulario antes de enviar
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                const password = document.getElementById('passwordUser').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const termsAccepted = document.getElementById('acceptTerms').checked;
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.');
+                    return;
+                }
+                
+                if (!termsAccepted) {
+                    e.preventDefault();
+                    alert('Debes aceptar los Términos y Condiciones para continuar.');
+                    return;
+                }
+            });
+            
+            // Actualizar estado del botón según aceptación de términos
+            acceptTerms.addEventListener('change', function() {
+                if (this.checked) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
+            });
+            
+            // Inicialmente deshabilitar el botón hasta que se acepten los términos
+            submitButton.disabled = !acceptTerms.checked;
+        });
+    </script>
+</body>
+</html>

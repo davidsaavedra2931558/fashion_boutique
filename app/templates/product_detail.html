@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.nameProduct }} - Fashion Boutique</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .product-gallery {
+            position: relative;
+        }
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .thumbnail:hover, .thumbnail.active {
+            border-color: #2c3e50;
+        }
+        .product-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .price {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        .discount {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .size-option, .color-option {
+            border: 2px solid #dee2e6;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .size-option:hover, .size-option.active,
+        .color-option:hover, .color-option.active {
+            border-color: #2c3e50;
+            background-color: #2c3e50;
+            color: white;
+        }
+        .related-products {
+            margin-top: 50px;
+        }
+        .related-card {
+            transition: transform 0.3s;
+        }
+        .related-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">FASHION BOUTIQUE</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/"><i class="bi bi-house"></i> Inicio</a>
+                <a class="nav-link" href="/cart"><i class="bi bi-cart"></i> Carrito</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/products">{{ product.category }}</a></li>
+                <li class="breadcrumb-item active">{{ product.nameProduct }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Galería de Imágenes -->
+            <div class="col-md-6">
+                <div class="product-gallery">
+                    <img src="{{ product.image or 'https://via.placeholder.com/500x600' }}" 
+                         class="main-image" 
+                         alt="{{ product.nameProduct }}"
+                         id="mainImage">
+                    
+                    <div class="thumbnails">
+                        <img src="{{ product.image or 'https://via.placeholder.com/500x600' }}" 
+                             class="thumbnail active" 
+                             onclick="changeImage(this)"
+                             alt="Vista 1">
+                        <!-- Puedes añadir más miniaturas si tienes más imágenes -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Producto -->
+            <div class="col-md-6">
+                <div class="product-info">
+                    <h1 class="h2">{{ product.nameProduct }}</h1>
+                    <p class="text-muted">Categoría: {{ product.category }}</p>
+                    
+                    <div class="price-section mb-3">
+                        <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                        {% if product.original_price %}
+                        <span class="original-price ms-2">${{ "%.2f"|format(product.original_price) }}</span>
+                        <span class="discount ms-2">-{{ ((1 - product.price/product.original_price) * 100)|round }}%</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="stock-info mb-3">
+                        {% if product.stock > 0 %}
+                        <span class="badge bg-success">En stock ({{ product.stock }} disponibles)</span>
+                        {% else %}
+                        <span class="badge bg-danger">Agotado</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="lead">{{ product.description or 'Producto de alta calidad' }}</p>
+
+                    <!-- Selectores de Talla y Color -->
+                    {% if product.size %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Talla:</label>
+                        <div class="d-flex flex-wrap">
+                            {% for size in product.size.split(',') %}
+                            <div class="size-option" onclick="selectSize(this)">{{ size.strip() }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if product.color %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Color:</label>
+                        <div class="d-flex flex-wrap">
+                            {% for color in product.color.split(',') %}
+                            <div class="color-option" onclick="selectColor(this)">{{ color.strip() }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Selector de Cantidad -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cantidad:</label>
+                        <div class="input-group" style="width: 120px;">
+                            <button class="btn btn-outline-secondary" onclick="decreaseQuantity()">-</button>
+                            <input type="number" class="form-control text-center" value="1" min="1" max="{{ product.stock }}" id="quantity">
+                            <button class="btn btn-outline-secondary" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-grid gap-2">
+                        {% if product.stock > 0 %}
+                        <button class="btn btn-primary btn-lg" onclick="addToCart()">
+                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                        </button>
+                        {% else %}
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            <i class="bi bi-x-circle"></i> Producto Agotado
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-outline-secondary">
+                            <i class="bi bi-heart"></i> Agregar a Favoritos
+                        </button>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="mt-4">
+                        <h5>Características:</h5>
+                        <ul>
+                            <li>Material: {{ product.details or 'Alta calidad' }}</li>
+                            <li>Envío gratuito en compras mayores a $100</li>
+                            <li>Devoluciones gratis en 30 días</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Descripción Extendida -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Descripción del Producto</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ product.description or 'Este producto combina estilo y comodidad. Fabricado con materiales de primera calidad, es perfecto para ocasiones especiales y uso diario.' }}</p>
+                        
+                        <h6>Especificaciones:</h6>
+                        <ul>
+                            <li><strong>Categoría:</strong> {{ product.category }}</li>
+                            {% if product.size %}<li><strong>Tallas disponibles:</strong> {{ product.size }}</li>{% endif %}
+                            {% if product.color %}<li><strong>Colores:</strong> {{ product.color }}</li>{% endif %}
+                            <li><strong>SKU:</strong> PROD-{{ product.idProduct }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Relacionados -->
+        {% if related_products %}
+        <div class="related-products">
+            <h3 class="mb-4">Productos Relacionados</h3>
+            <div class="row">
+                {% for related in related_products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card related-card h-100">
+                        <img src="{{ related.image or 'https://via.placeholder.com/250x300' }}" 
+                             class="card-img-top" 
+                             alt="{{ related.nameProduct }}"
+                             style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ related.nameProduct }}</h6>
+                            <p class="card-text text-primary fw-bold">${{ "%.2f"|format(related.price) }}</p>
+                            <a href="{{ url_for('products.product_detail', product_id=related.idProduct) }}" 
+                               class="btn btn-sm btn-outline-primary">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2024 Fashion Boutique. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function changeImage(element) {
+            document.getElementById('mainImage').src = element.src;
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function selectSize(element) {
+            document.querySelectorAll('.size-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function selectColor(element) {
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function increaseQuantity() {
+            const input = document.getElementById('quantity');
+            const max = parseInt(input.max);
+            if (parseInt(input.value) < max) {
+                input.value = parseInt(input.value) + 1;
+            }
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        function addToCart() {
+            // Aquí iría la lógica para agregar al carrito
+            alert('Producto agregado al carrito!');
+            // Redirigir al carrito o mostrar modal
+        }
+    </script>
+</body>
+</html>

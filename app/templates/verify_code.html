@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Código - Fashion Boutique</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+        }
+        
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 100px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            color: #000;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .form-control {
+            border-radius: 20px;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+        }
+        
+        .form-control:focus {
+            border-color: #000;
+            box-shadow: none;
+        }
+        
+        .btn-login {
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .form-footer a {
+            color: #000;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        .flash-message {
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .info-text {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .timer {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .security-note {
+            background-color: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="login-container">
+                <h1 class="brand-title">FASHION BOUTIQUE</h1>
+                <p class="text-center mb-4" style="color: #666;">Verificación de seguridad</p>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}             
+                        {% for category, message in messages %}
+                            <!-- ✅ OCULTAR CÓDIGOS POR SEGURIDAD -->
+                            {% if "Código de verificación" not in message and "Código:" not in message %}
+                                <div class="flash-message alert alert-{{ category }}">{{ message }}</div>
+                            {% else %}
+                                <!-- ✅ Mostrar mensaje genérico en lugar del código -->
+                                {% if "Código de verificación" in message %}
+                                    <div class="flash-message alert alert-info">Se ha enviado un código de verificación a tu email.</div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- ✅ NOTA DE SEGURIDAD -->
+                <div class="security-note">
+                    <strong>🔒 Por tu seguridad:</strong> El código se envió a tu email y no se muestra en esta página.
+                </div>
+
+                <div class="info-text">
+                    <p>Hemos enviado un código de verificación a:<br><strong>{{ email }}</strong></p>
+                    <p>Revisa tu bandeja de entrada y spam. El código expira en 10 minutos.</p>
+                </div>
+
+                <form method="post" action="{{ url_for('auth.verify_reset_code') }}">
+                    <div class="form-group">
+                        <input type="text" name="verification_code" id="verification_code" 
+                               class="form-control" placeholder="000000" required maxlength="6" 
+                               pattern="[0-9]{6}" title="Ingresa un código de 6 dígitos">
+                    </div>
+                    <button type="submit" class="btn btn-login">Verificar código</button>
+                </form>
+                
+                <div class="timer" id="timer">
+                    El código expirará en: <span id="countdown">10:00</span>
+                </div>
+                
+                <div class="form-footer mt-4">
+                    <p><a href="{{ url_for('auth.reset_request') }}">Volver atrás</a></p>
+                    <p><a href="{{ url_for('auth.login') }}">Volver al inicio de sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Auto-avance entre campos (para mejor UX)
+    document.getElementById('verification_code').focus();
+    
+    // Auto-submit cuando se complete el código
+    document.getElementById('verification_code').addEventListener('input', function() {
+        if (this.value.length === 6) {
+            this.form.submit();
+        }
+    });
+    
+    // Temporizador de 10 minutos
+    let timeLeft = 10 * 60; // 10 minutos en segundos
+    const timerElement = document.getElementById('countdown');
+    
+    const countdown = setInterval(function() {
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerElement.innerHTML = "00:00";
+            alert('El código ha expirado. Por favor, solicita uno nuevo.');
+            window.location.href = "{{ url_for('auth.reset_request') }}";
+        } else {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timeLeft--;
+        }
+    }, 1000);
+</script>
+</body>
+</html>

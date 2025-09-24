@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fashion Boutique</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #7f8c8d;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --light-text: #ecf0f1;
+            --sidebar-width: 250px;
+            --border-color: #e0e0e0;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Arial', sans-serif;
+            color: var(--dark-text);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding-top: 20px;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .sidebar-brand {
+            padding: 1rem 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 0.8rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.05);
+            color: white;
+            border-left: 4px solid #fff;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Cards */
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: #fff;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        
+        .stat-card p {
+            color: #7f8c8d;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+        }
+        
+        /* Tables */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: var(--dark-text);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .table td {
+            border-color: var(--border-color);
+            vertical-align: middle;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Section Styles */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .action-buttons .btn {
+            margin-right: 5px;
+        }
+        
+        /* Forms */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+        }
+        
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.6em;
+        }
+        
+        .badge.bg-success {
+            background-color: #27ae60 !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #f39c12 !important;
+            color: #fff;
+        }
+        
+        .badge.bg-info {
+            background-color: #3498db !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: #e74c3c !important;
+        }
+        
+        /* User dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .user-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .user-dropdown-toggle:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            min-width: 150px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .user-dropdown-menu.show {
+            display: block;
+        }
+        
+        .user-dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: var(--dark-text);
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            cursor: pointer;
+        }
+        
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .sidebar-brand, .sidebar-menu span {
+                display: none;
+            }
+            
+            .sidebar-menu i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        /* Loading spinner */
+        .db-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            vertical-align: text-bottom;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FASHION BOUTIQUE</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+            <li><a href="#" class="nav-link" data-section="productos"><i class="bi bi-bag"></i> <span>Productos</span></a></li>
+            <li><a href="#" class="nav-link" data-section="categorias"><i class="bi bi-tags"></i> <span>Categorías</span></a></li>
+            <li><a href="#" class="nav-link" data-section="pedidos"><i class="bi bi-cart-check"></i> <span>Pedidos</span></a></li>
+            <li><a href="#" class="nav-link" data-section="usuarios"><i class="bi bi-people"></i> <span>Usuarios</span></a></li>
+            <li><a href="#" class="nav-link" data-section="reportes"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a></li>
+            <li><a href="#" class="nav-link" data-section="configuracion"><i class="bi bi-gear"></i> <span>Configuración</span></a></li>
+            <li><a href="#" id="logout-sidebar"><i class="bi bi-box-arrow-right"></i> <span>Cerrar Sesión</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1 id="section-title">Panel de Administración</h1>
+            <div class="user-dropdown">
+                <div class="user-dropdown-toggle">
+                    <span class="me-2">Hola, Admin</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=2c3e50&color=fff" class="rounded-circle" width="40" height="40" alt="Avatar">
+                </div>
+                <div class="user-dropdown-menu" id="userDropdown">
+                    <a href="#" class="user-dropdown-item"><i class="bi bi-person me-2"></i> Mi Perfil</a>
+                    <a href="#" class="user-dropdown-item"><i class="bi bi-gear me-2"></i> Configuración</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="user-dropdown-item" id="logout-header"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <!-- Welcome Card -->
+            <div class="welcome-card">
+                <h1><i class="bi bi-person-circle"></i> ¡Hola, Admin!</h1>
+                <p class="lead">Bienvenido/a al panel de administración de tu tienda. Aquí puedes gestionar productos, categorías, pedidos y más.</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <i class="bi bi-cart"></i>
+                        <h2 id="total-orders">0</h2>
+                        <p>Pedidos Hoy</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <i class="bi bi-currency-dollar"></i>
+                        <h2 id="total-income">$0</h2>
+                        <p>Ingresos Hoy</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <i class="bi bi-bag"></i>
+                        <h2 id="total-products">0</h2>
+                        <p>Productos</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <i class="bi bi-people"></i>
+                        <h2 id="total-customers">0</h2>
+                        <p>Clientes Nuevos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders and Top Products -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="table-container">
+                        <h4 class="mb-4">Pedidos Recientes</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-orders-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Cargando pedidos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Ver todos los pedidos</a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="table-container">
+                        <h4 class="mb-4">Productos Populares</h4>
+                        <div class="list-group" id="popular-products">
+                            <div class="text-center py-3">
+                                <span class="db-spinner text-primary"></span>
+                                <p class="mt-2">Cargando productos...</p>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-outline-primary mt-3">Gestionar productos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Section -->
+        <div id="productos" class="content-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Gestión de Productos</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productoModal">
+                    <i class="bi bi-plus-circle"></i> Nuevo Producto
+                </button>
+            </div>
+
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <span class="db-spinner text-primary"></span>
+                                    <p class="mt-2">Cargando productos...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para agregar/editar producto -->
+        <div class="modal fade" id="productoModal" tabindex="-1" aria-labelledby="productoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productoModalLabel">Agregar Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="productForm">
+                            <input type="hidden" id="productId">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="productName" class="form-label">Nombre del Producto *</label>
+                                        <input type="text" class="form-control" id="productName" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="productCategory" class="form-label">Categoría *</label>
+                                        <select class="form-select" id="productCategory" required>
+                                            <option value="">Seleccionar categoría</option>
+                                            <option value="Vestidos">Vestidos</option>
+                                            <option value="Pantalones">Pantalones</option>
+                                            <option value="Camisas">Camisas</option>
+                                            <option value="Accesorios">Accesorios</option>
+                                            <option value="Zapatos">Zapatos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="productPrice" class="form-label">Precio *</label>
+                                        <input type="number" class="form-control" id="productPrice" min="0" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="productStock" class="form-label">Stock *</label>
+                                        <input type="number" class="form-control" id="productStock" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productDescription" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="productDescription" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productImage" class="form-label">URL de la Imagen</label>
+                                <input type="url" class="form-control" id="productImage" placeholder="https://ejemplo.com/imagen.jpg">
+                            </div>
+                            <div class="alert alert-info">
+                                <small>Los campos marcados con * son obligatorios.</small>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="saveProduct">
+                            <span id="saveProductText">Guardar Producto</span>
+                            <span id="saveProductSpinner" class="d-none">
+                                <span class="db-spinner spinner-border-sm"></span> Guardando...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Categorías Section -->
+<div id="categorias" class="content-section">
+    <h2 class="mb-4">Gestión de Categorías</h2>
+    
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-container">
+                <h4>Agregar Nueva Categoría</h4>
+                <form id="categoriaForm">
+                    <div class="mb-3">
+                        <label for="categoriaNombre" class="form-label">Nombre de la categoría *</label>
+                        <input type="text" class="form-control" id="categoriaNombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoriaDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="categoriaDescripcion" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="saveCategoryBtn">
+                        <span id="saveCategoryText">Guardar Categoría</span>
+                        <span id="saveCategorySpinner" class="d-none">
+                            <span class="db-spinner spinner-border-sm"></span> Guardando...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-7">
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Productos</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <span class="db-spinner text-primary"></span>
+                                    <p class="mt-2">Cargando categorías...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Usuarios Section -->
+        <div id="usuarios" class="content-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Gestión de Usuarios</h2>
+                <div>
+                    <button class="btn btn-outline-primary me-2" id="refreshUsers">
+                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                    </button>
+                    <button class="btn btn-primary" id="addUserBtn" data-bs-toggle="modal" data-bs-target="#userModal">
+                        <i class="bi bi-plus-circle"></i> Nuevo Usuario
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Avatar</th>
+                                <th>Nombre de Usuario</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Fecha Registro</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <span class="db-spinner text-primary"></span>
+                                    <p class="mt-2">Cargando usuarios...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para agregar/editar usuario -->
+        <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userModalLabel">Agregar Nuevo Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userForm">
+                            <input type="hidden" id="userId">
+                            <div class="mb-3">
+                                <label for="userName" class="form-label">Nombre Completo *</label>
+                                <input type="text" class="form-control" id="userName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userEmail" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="userEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userPassword" class="form-label">Contraseña *</label>
+                                <input type="password" class="form-control" id="userPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userRole" class="form-label">Rol *</label>
+                                <select class="form-select" id="userRole" required>
+                                    <option value="">Seleccionar rol</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Cliente">Cliente</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userStatus" class="form-label">Estado *</label>
+                                <select class="form-select" id="userStatus" required>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="alert alert-info">
+                                <small>Los campos marcados con * son obligatorios.</small>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="saveUser">
+                            <span id="saveUserText">Guardar Usuario</span>
+                            <span id="saveUserSpinner" class="d-none">
+                                <span class="db-spinner spinner-border-sm"></span> Guardando...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Otras secciones (pedidos, reportes, configuración) -->
+        <div id="pedidos" class="content-section">
+            <h2>Gestión de Pedidos</h2>
+            <p>Contenido de la sección de pedidos...</p>
+        </div>
+
+        <div id="reportes" class="content-section">
+            <h2>Reportes y Análisis</h2>
+            <p>Contenido de la sección de reportes...</p>
+        </div>
+
+        <div id="configuracion" class="content-section">
+            <h2>Configuración del Sistema</h2>
+            <p>Contenido de la sección de configuración...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navegación entre secciones
+        document.addEventListener('DOMContentLoaded', function() {
+            // ==============================================
+            // FUNCIONALIDADES DE LA INTERFAZ (ACTUALIZADO PARA MYSQL)
+            // ==============================================
+
+            // Actualizar estadísticas del dashboard DESDE SERVIDOR
+            async function updateDashboardStats() {
+                try {
+                    // Obtener estadísticas del servidor Flask
+                    const response = await fetch('/api/dashboard/stats');
+                    const stats = await response.json();
+                    
+                    document.getElementById('total-orders').textContent = stats.total_orders || 0;
+                    document.getElementById('total-income').textContent = `$${(stats.today_income || 0).toFixed(2)}`;
+                    document.getElementById('total-products').textContent = stats.total_products || 0;
+                    document.getElementById('total-customers').textContent = stats.total_users || 0;
+                } catch (error) {
+                    console.error('Error al cargar estadísticas:', error);
+                }
+            }
+
+            // Renderizar pedidos recientes DESDE SERVIDOR
+            async function renderRecentOrders() {
+                try {
+                    const response = await fetch('/api/dashboard/stats');
+                    const stats = await response.json();
+                    const ordersBody = document.getElementById('recent-orders-body');
+                    ordersBody.innerHTML = '';
+                    
+                    if (!stats.recent_orders || stats.recent_orders.length === 0) {
+                        ordersBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center">No hay pedidos registrados</td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    stats.recent_orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.id}</td>
+                            <td>${order.customer}</td>
+                            <td>${order.date}</td>
+                            <td>$${order.amount.toFixed(2)}</td>
+                            <td><span class="badge ${getStatusBadgeClass(order.status)}">${order.status}</span></td>
+                        `;
+                        ordersBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar pedidos:', error);
+                }
+            }
+
+            // Renderizar productos populares DESDE SERVIDOR
+            async function renderPopularProducts() {
+                try {
+                    const response = await fetch('/api/dashboard/stats');
+                    const stats = await response.json();
+                    const popularProductsContainer = document.getElementById('popular-products');
+                    popularProductsContainer.innerHTML = '';
+                    
+                    if (!stats.popular_products || stats.popular_products.length === 0) {
+                        popularProductsContainer.innerHTML = `
+                            <div class="text-center py-3">
+                                <p>No hay productos populares</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    stats.popular_products.forEach(product => {
+                        const productElement = document.createElement('a');
+                        productElement.href = '#';
+                        productElement.className = 'list-group-item list-group-item-action';
+                        productElement.innerHTML = `
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${product.name}</h6>
+                                <small>${product.sales || 0} vendidos</small>
+                            </div>
+                            <small class="text-muted">Categoría: ${product.category}</small>
+                        `;
+                        popularProductsContainer.appendChild(productElement);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar productos populares:', error);
+                }
+            }
+
+            // Renderizar tabla de productos DESDE SERVIDOR MYSQL
+            async function renderProductsTable() {
+                try {
+                    // OBTENER PRODUCTOS DEL SERVIDOR FLASK - TODOS LOS PRODUCTOS
+                    const response = await fetch('/api/products');
+                    
+                    // Verificar si la respuesta es exitosa
+                    if (!response.ok) {
+                        throw new Error(`Error del servidor: ${response.status}`);
+                    }
+                    
+                    const products = await response.json();
+                    
+                    const productsTableBody = document.getElementById('products-table-body');
+                    productsTableBody.innerHTML = '';
+                    
+                    if (products.length === 0) {
+                        productsTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="text-center">No hay productos registrados</td>
+                            </tr>
+                        `;
+                        return; 
+                    }
+                    
+                    // MOSTRAR TODOS LOS PRODUCTOS (sin límite)
+                    products.forEach(product => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td><img src="${product.image_url || product.image || 'https://via.placeholder.com/50'}" class="rounded" alt="${product.name}" width="50" height="50" style="object-fit: cover;"></td>
+                            <td>${product.name}</td>
+                            <td>${product.category}</td>
+                            <td>$${product.price.toFixed(2)}</td>
+                            <td>${product.stock}</td>
+                            <td><span class="badge ${product.status === 'Activo' ? 'bg-success' : 'bg-danger'}">${product.status}</span></td>
+                            <td class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary edit-product" data-id="${product.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-product" data-id="${product.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        productsTableBody.appendChild(row);
+                    });
+                    
+                    // Agregar event listeners a los botones de productos
+                    attachProductEventListeners();
+                } catch (error) {
+                    console.error('Error al cargar productos:', error);
+                    const productsTableBody = document.getElementById('products-table-body');
+                    productsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center text-danger">
+                                Error al cargar productos: ${error.message}
+                                <br><small>Recarga la página o verifica la conexión</small>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            // Función auxiliar para obtener clase de badge según estado
+            function getStatusBadgeClass(status) {
+                switch(status) {
+                    case 'Completado': return 'bg-success';
+                    case 'Procesando': return 'bg-warning';
+                    case 'Enviado': return 'bg-info';
+                    default: return 'bg-secondary';
+                }
+            }
+
+            // Agregar event listeners a los botones de productos
+            function attachProductEventListeners() {
+                // Botones de editar producto
+                document.querySelectorAll('.edit-product').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-id');
+                        editProduct(productId);
+                    });
+                });
+                
+                // Botones de eliminar producto
+                document.querySelectorAll('.delete-product').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-id');
+                        deleteProductFromDB(productId);
+                    });
+                });
+            }
+
+            // Función para editar producto (OBTENER DESDE SERVIDOR)
+            async function editProduct(id) {
+                try {
+                    // Obtener producto específico del servidor
+                    const response = await fetch(`/api/products/${id}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el producto');
+                    }
+                    
+                    const product = await response.json();
+                    
+                    if (product) {
+                        document.getElementById('productoModalLabel').textContent = 'Editar Producto';
+                        document.getElementById('productId').value = product.id;
+                        document.getElementById('productName').value = product.name;
+                        document.getElementById('productCategory').value = product.category;
+                        document.getElementById('productPrice').value = product.price;
+                        document.getElementById('productStock').value = product.stock;
+                        document.getElementById('productDescription').value = product.description || '';
+                        document.getElementById('productImage').value = product.image_url || product.image || '';
+                        
+                        const modal = new bootstrap.Modal(document.getElementById('productoModal'));
+                        modal.show();
+                    }
+                } catch (error) {
+                    console.error('Error al cargar producto para editar:', error);
+                    alert('Error al cargar el producto para editar: ' + error.message);
+                }
+            }
+
+            // Función para eliminar producto DESDE SERVIDOR
+            async function deleteProductFromDB(id) {
+                if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                    try {
+                        // Eliminar del servidor
+                        const response = await fetch(`/api/products/${id}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Error al eliminar producto');
+                        }
+                        
+                        await renderProductsTable();
+                        await updateDashboardStats();
+                        alert('Producto eliminado correctamente');
+                    } catch (error) {
+                        console.error('Error al eliminar producto:', error);
+                        alert('Error al eliminar el producto');
+                    }
+                }
+            }
+
+            // ==============================================
+            // GUARDAR PRODUCTO (ENVIAR A SERVIDOR MYSQL) - NUEVA FUNCIÓN
+            // ==============================================
+
+            // Guardar producto (nuevo o editado) - ENVIAR A SERVIDOR
+            document.getElementById('saveProduct').addEventListener('click', async function() {
+                const productId = document.getElementById('productId').value;
+                const name = document.getElementById('productName').value;
+                const category = document.getElementById('productCategory').value;
+                const price = parseFloat(document.getElementById('productPrice').value);
+                const stock = parseInt(document.getElementById('productStock').value);
+                const description = document.getElementById('productDescription').value;
+                const image = document.getElementById('productImage').value || 'https://via.placeholder.com/250x300/f8f9fa/000?text=' + encodeURIComponent(name);
+                
+                // Validaciones
+                if (!name || !category || isNaN(price) || isNaN(stock)) {
+                    alert('Por favor, complete todos los campos obligatorios correctamente.');
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                document.getElementById('saveProductText').classList.add('d-none');
+                document.getElementById('saveProductSpinner').classList.remove('d-none');
+                this.disabled = true;
+                
+                try {
+                    // ENVIAR AL SERVIDOR FLASK (MySQL)
+                    const url = productId ? `/api/products/${productId}` : '/api/products';
+                    const method = productId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            category: category,
+                            price: price,
+                            stock: stock,
+                            description: description,
+                            image: image,
+                            status: stock > 0 ? 'Activo' : 'Inactivo'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Error del servidor');
+                    }
+                    
+                    // Actualizar la tabla de productos
+                    await renderProductsTable();
+                    await updateDashboardStats();
+                    await renderPopularProducts();
+                    
+                    // Cerrar modal y resetear formulario
+                    bootstrap.Modal.getInstance(document.getElementById('productoModal')).hide();
+                    document.getElementById('productForm').reset();
+                    document.getElementById('productId').value = '';
+                    
+                    alert('Producto guardado correctamente en MySQL');
+                    
+                } catch (error) {
+                    console.error('Error al guardar producto:', error);
+                    alert('Error al guardar el producto: ' + error.message);
+                } finally {
+                    // Ocultar indicador de carga
+                    document.getElementById('saveProductText').classList.remove('d-none');
+                    document.getElementById('saveProductSpinner').classList.add('d-none');
+                    this.disabled = false;
+                }
+            });
+                        
+            // Cuando se cierra el modal, resetear el formulario
+            document.getElementById('productoModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                document.getElementById('productoModalLabel').textContent = 'Agregar Nuevo Producto';
+            });
+            
+            // ==============================================
+            // NAVEGACIÓN Y OTRAS FUNCIONALIDADES
+            // ==============================================
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const sectionTitle = document.getElementById('section-title');
+            
+            // Manejador de clic para los enlaces de navegación
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Obtener la sección objetivo
+                    const targetSection = this.getAttribute('data-section');
+                    
+                    // Actualizar clases activas
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Ocultar todas las secciones y mostrar la objetivo
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Actualizar título de la sección
+                    const sectionName = this.querySelector('span').textContent;
+                    sectionTitle.textContent = sectionName;
+                    
+                    // Si es la sección de productos, renderizar la tabla
+                    if (targetSection === 'productos') {
+                        renderProductsTable();
+                    }
+                    
+                    // Si es la sección de dashboard, actualizar estadísticas
+                    if (targetSection === 'dashboard') {
+                        updateDashboardStats();
+                        renderRecentOrders();
+                        renderPopularProducts();
+                    }
+                    
+                    // Si es la sección de usuarios, cargar usuarios
+                    if (targetSection === 'usuarios') {
+                        loadUsers();
+                    }
+                });
+            });
+            
+            // Manejo del formulario de categorías
+            const categoriaForm = document.getElementById('categoriaForm');
+            if (categoriaForm) {
+                categoriaForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Categoría agregada correctamente (en una implementación real, esto enviaría los datos al servidor)');
+                    this.reset();
+                });
+            }
+            
+            // Funcionalidad del dropdown de usuario
+            const userDropdownToggle = document.querySelector('.user-dropdown-toggle');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            userDropdownToggle.addEventListener('click', function() {
+                userDropdown.classList.toggle('show');
+            });
+            
+            // Cerrar el dropdown al hacer clic fuera de él
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.user-dropdown')) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+            
+            // Funcionalidad de cierre de sesión
+            const logoutButtons = document.querySelectorAll('#logout-sidebar, #logout-header');
+            
+            logoutButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                        // Redirigir a la página de cierre de sesión
+                        window.location.href = "/logout";
+                    }
+                });
+            });
+
+            // ==============================================
+            // CÓDIGO PARA GESTIÓN DE USUARIOS
+            // ==============================================
+            
+            // Función para cargar usuarios
+            async function loadUsers() {
+                try {
+                    const response = await fetch('/api/users');
+                    const users = await response.json();
+                    
+                    const usersTableBody = document.getElementById('usersTableBody');
+                    usersTableBody.innerHTML = '';
+                    
+                    if (users.length === 0) {
+                        usersTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="text-center">No hay usuarios registrados</td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    users.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>
+                                <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=2c3e50&color=fff'}" 
+                                    class="rounded-circle" width="40" height="40" alt="Avatar">
+                            </td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>
+                                <span class="badge ${user.role === 'Administrador' ? 'bg-primary' : user.role === 'Vendedor' ? 'bg-info' : 'bg-secondary'}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td>${user.created_at}</td>
+                            <td>
+                                <span class="badge ${user.status === 'Activo' ? 'bg-success' : 'bg-danger'}">${user.status}</span>
+                            </td>
+                            <td class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary view-user" data-id="${user.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-user" data-id="${user.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-user" data-id="${user.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        usersTableBody.appendChild(row);
+                    });
+                    
+                    // Agregar event listeners a los botones de usuario
+                    attachUserEventListeners();
+                } catch (error) {
+                    console.error('Error al cargar usuarios:', error);
+                }
+            }
+            
+            function attachUserEventListeners() {
+                // Botón de ver usuario
+                document.querySelectorAll('.view-user').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        viewUser(id);
+                    });
+                });
+                
+                // Botón de editar usuario
+                document.querySelectorAll('.edit-user').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        editUser(id);
+                    });
+                });
+                
+                // Botón de eliminar usuario
+                document.querySelectorAll('.delete-user').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        deleteUserFromDB(id);
+                    });
+                });
+            }
+
+            // Función para ver detalles de usuario
+            async function viewUser(id) {
+                try {
+                    const response = await fetch(`/api/users/${id}`);
+                    const user = await response.json();
+                    
+                    if (user) {
+                        alert(`Detalles del usuario:\n\nID: ${user.id}\nNombre: ${user.name}\nEmail: ${user.email}\nRol: ${user.role}\nEstado: ${user.status}\nRegistrado: ${user.created_at}`);
+                    }
+                } catch (error) {
+                    console.error('Error al cargar usuario:', error);
+                }
+            }
+
+            // Función para editar usuario
+            async function editUser(id) {
+                try {
+                    const response = await fetch(`/api/users/${id}`);
+                    const user = await response.json();
+                    
+                    if (user) {
+                        document.getElementById('userModalLabel').textContent = 'Editar Usuario';
+                        document.getElementById('userId').value = user.id;
+                        document.getElementById('userName').value = user.name;
+                        document.getElementById('userEmail').value = user.email;
+                        document.getElementById('userPassword').value = '';
+                        document.getElementById('userRole').value = user.role;
+                        document.getElementById('userStatus').value = user.status;
+                        
+                        const modal = new bootstrap.Modal(document.getElementById('userModal'));
+                        modal.show();
+                    }
+                } catch (error) {
+                    console.error('Error al cargar usuario para editar:', error);
+                    alert('Error al cargar el usuario para editar');
+                }
+            }
+
+            // Función para eliminar usuario
+            async function deleteUserFromDB(id) {
+                if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+                    try {
+                        const response = await fetch(`/api/users/${id}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Error al eliminar usuario');
+                        }
+                        
+                        await loadUsers();
+                        await updateDashboardStats();
+                        alert('Usuario eliminado correctamente');
+                    } catch (error) {
+                        console.error('Error al eliminar usuario:', error);
+                        alert('Error al eliminar el usuario');
+                    }
+                }
+            }
+            
+            // Guardar usuario (nuevo o editado)
+            document.getElementById('saveUser').addEventListener('click', async function() {
+                const userId = document.getElementById('userId').value;
+                const name = document.getElementById('userName').value;
+                const email = document.getElementById('userEmail').value;
+                const password = document.getElementById('userPassword').value;
+                const role = document.getElementById('userRole').value;
+                const status = document.getElementById('userStatus').value;
+                
+                // Validaciones
+                if (!name || !email || !role || !status) {
+                    alert('Por favor, complete todos los campos obligatorios.');
+                    return;
+                }
+                
+                // Validación de email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Por favor, ingrese un email válido.');
+                    return;
+                }
+                
+                // Si es un nuevo usuario, validar la contraseña
+                if (!userId && !password) {
+                    alert('Por favor, ingrese una contraseña para el nuevo usuario.');
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                document.getElementById('saveUserText').classList.add('d-none');
+                document.getElementById('saveUserSpinner').classList.remove('d-none');
+                this.disabled = true;
+                
+                try {
+                    const url = userId ? `/api/users/${userId}` : '/api/users';
+                    const method = userId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password,
+                            role: role,
+                            status: status
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Error al guardar usuario');
+                    }
+                    
+                    await loadUsers();
+                    await updateDashboardStats();
+                    
+                    // Cerrar modal y resetear formulario
+                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                    document.getElementById('userForm').reset();
+                    document.getElementById('userId').value = '';
+                    
+                    alert('Usuario guardado correctamente');
+                } catch (error) {
+                    console.error('Error al guardar usuario:', error);
+                    alert('Error al guardar el usuario: ' + error.message);
+                } finally {
+                    // Ocultar indicador de carga
+                    document.getElementById('saveUserText').classList.remove('d-none');
+                    document.getElementById('saveUserSpinner').classList.add('d-none');
+                    this.disabled = false;
+                }
+            });
+            
+            // Cuando se cierra el modal, resetear el formulario
+            document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('userForm').reset();
+                document.getElementById('userId').value = '';
+                document.getElementById('userModalLabel').textContent = 'Agregar Nuevo Usuario';
+            });
+            
+            // Botón de actualizar usuarios
+            const refreshUsersBtn = document.getElementById('refreshUsers');
+            if (refreshUsersBtn) {
+                refreshUsersBtn.addEventListener('click', function() {
+                    loadUsers();
+                });
+            }
+            
+            // ==============================================
+            // INICIALIZACIÓN DE LA APLICACIÓN
+            // ==============================================
+            
+            async function initApp() {
+                try {
+                    // Inicializar la interfaz
+                    updateDashboardStats();
+                    renderRecentOrders();
+                    renderPopularProducts();
+                    renderProductsTable();
+                    loadUsers();
+                    
+                    console.log('Aplicación inicializada correctamente');
+                } catch (error) {
+                    console.error('Error al inicializar la aplicación:', error);
+                    alert('Error al inicializar la aplicación. Por favor, recarga la página.');
+                }
+            }
+            
+            // Iniciar la aplicación
+            initApp();
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,492 @@
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Acceso - Fashion Boutique</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            :root {
+                --primary-color: #000000;
+                --secondary-color: #ffffff;
+                --accent-color: #f8f9fa;
+                --text-color: #333333;
+                --light-gray: #666666;
+                --border-radius: 10px;
+                --google-blue: #4285F4;
+                --google-blue-hover: #357ae8;
+            }
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background-color: var(--accent-color);
+                color: var(--text-color);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .container-wrapper {
+                display: flex;
+                width: 100%;
+                max-width: 1100px;
+                min-height: 600px;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            }
+            
+            .brand-section {
+                flex: 1;
+                background: linear-gradient(120deg, rgba(0, 0, 0, 0.85), rgba(40, 40, 40, 0.9)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="rgb(248, 249, 250)"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="rgba(0,0,0,0.05)" stroke-width="1"/></svg>');
+                background-size: cover;
+                color: var(--secondary-color);
+                padding: 50px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                position: relative;
+            }
+            
+            .brand-content {
+                max-width: 450px;
+                z-index: 2;
+            }
+            
+            .brand-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 2.8rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+                letter-spacing: 1.2px;
+            }
+            
+            .brand-subtitle {
+                font-size: 1.15rem;
+                line-height: 1.7;
+                margin-bottom: 30px;
+                opacity: 0.9;
+            }
+            
+            .brand-highlight {
+                display: inline-block;
+                width: 60px;
+                height: 3px;
+                background-color: var(--secondary-color);
+                margin: 25px 0;
+            }
+            
+            .login-section {
+                flex: 1;
+                background-color: var(--secondary-color);
+                padding: 50px 45px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .login-container {
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .login-title {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                margin-bottom: 35px;
+                text-align: center;
+                position: relative;
+                padding-bottom: 15px;
+            }
+            
+            .login-title:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 50px;
+                height: 3px;
+                background-color: var(--primary-color);
+            }
+            
+            .form-group {
+                margin-bottom: 22px;
+            }
+            
+            .form-group label {
+                font-weight: 600;
+                margin-bottom: 8px;
+                display: block;
+                font-size: 0.95rem;
+            }
+            
+            .input-with-icon {
+                position: relative;
+            }
+            
+            .form-control {
+                width: 100%;
+                padding: 14px 20px;
+                padding-left: 45px;
+                border: 1px solid #e0e0e0;
+                border-radius: var(--border-radius);
+                font-size: 1rem;
+                transition: all 0.3s;
+                background-color: #fafafa;
+            }
+            
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+            }
+            
+            .input-icon {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--light-gray);
+            }
+            
+            .btn-login {
+                background-color: var(--primary-color);
+                color: var(--secondary-color);
+                border: none;
+                border-radius: var(--border-radius);
+                padding: 14px;
+                font-weight: 600;
+                font-size: 1rem;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                width: 100%;
+                transition: all 0.3s;
+                margin-top: 10px;
+                cursor: pointer;
+            }
+            
+            .btn-login:hover {
+                background-color: #333;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .form-footer {
+                text-align: center;
+                margin-top: 30px;
+                color: var(--light-gray);
+                font-size: 0.9rem;
+            }
+            
+            .form-footer a {
+                color: var(--primary-color);
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+            
+            .form-footer a:hover {
+                text-decoration: underline;
+            }
+            
+            .form-footer p {
+                margin-bottom: 10px;
+            }
+            
+            .flash-message {
+                border-radius: var(--border-radius);
+                padding: 12px 15px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            .social-login {
+                margin: 25px 0;
+                text-align: center;
+            }
+            
+            .social-divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: var(--light-gray);
+                font-size: 0.9rem;
+            }
+            
+            .social-divider::before,
+            .social-divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .social-divider::before {
+                margin-right: 10px;
+            }
+            
+            .social-divider::after {
+                margin-left: 10px;
+            }
+            
+            .social-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+            }
+            
+            .social-btn {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #e0e0e0;
+                background: white;
+                color: var(--text-color);
+                transition: all 0.3s;
+            }
+            
+            .social-btn:hover {
+                background-color: #f5f5f5;
+                transform: translateY(-2px);
+            }
+            
+            /* Estilos para el botón de Google */
+            .google-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--google-blue);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                padding: 12px 20px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                width: 100%;
+                transition: all 0.3s;
+                cursor: pointer;
+                margin-top: 10px;
+            }
+            
+            .google-btn:hover {
+                background-color: var(--google-blue-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(66, 133, 244, 0.2);
+            }
+            
+            .google-btn i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+            }
+            
+            /* Estilos para mensajes de estado */
+            .status-message {
+                padding: 10px;
+                border-radius: var(--border-radius);
+                margin: 15px 0;
+                text-align: center;
+                font-size: 0.9rem;
+                display: none;
+            }
+            
+            .status-success {
+                background-color: #e6f7ee;
+                color: #2e7d32;
+                border: 1px solid #c8e6c9;
+            }
+            
+            .status-info {
+                background-color: #e3f2fd;
+                color: #1565c0;
+                border: 1px solid #bbdefb;
+            }
+            
+            .status-error {
+                background-color: #ffebee;
+                color: #c62828;
+                border: 1px solid #ffcdd2;
+            }
+            
+            @media (max-width: 992px) {
+                .container-wrapper {
+                    flex-direction: column;
+                    max-width: 550px;
+                }
+                
+                .brand-section, .login-section {
+                    padding: 40px 30px;
+                }
+                
+                .brand-content {
+                    max-width: 100%;
+                    text-align: center;
+                }
+                
+                .brand-highlight {
+                    margin: 25px auto;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .brand-title {
+                    font-size: 2.2rem;
+                }
+                
+                .brand-subtitle {
+                    font-size: 1rem;
+                }
+                
+                .login-title {
+                    font-size: 1.6rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="container-wrapper">
+        <!-- Sección de marca -->
+        <div class="brand-section">
+            <div class="brand-content">
+                <h1 class="brand-title">FASHION BOUTIQUE</h1>
+                <div class="brand-highlight"></div>
+                <p class="brand-subtitle">Accede a tu cuenta para descubrir las últimas tendencias y novedades en moda. Disfruta de ofertas exclusivas y personaliza tu experiencia de compra.</p>
+            </div>
+        </div>
+        
+        <!-- Sección de login -->
+        <div class="login-section">
+            <div class="login-container">
+                <h2 class="login-title">Iniciar Sesión</h2>
+                
+                <!-- Mensajes de estado para Google Login -->
+                <div id="googleStatus" class="status-message"></div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}             
+                            {% for category, message in messages %}
+                                <div class="flash-message alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="post" action="{{ url_for('auth.login') }}">
+                    <div class="form-group">
+                        <label for="nameUser">Usuario</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" name="nameUser" id="nameUser" class="form-control" placeholder="Tu nombre de usuario" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordUser">Contraseña</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" name="passwordUser" id="passwordUser" class="form-control" placeholder="Tu contraseña" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-login">ACCEDER</button>
+                </form>
+                
+                <div class="social-login">
+                    <div class="social-divider">O accede con</div>
+                    
+                    <!-- Botón de Google mejorado -->
+                    <button id="googleLoginBtn" class="google-btn">
+                        <i class="fab fa-google"></i> Continuar con Google
+                    </button>
+                    
+                    <div class="social-buttons" style="margin-top: 15px;">
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-apple"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-footer">
+                    <p><a href="{{ url_for('auth.reset_request') }}">¿Olvidaste tu contraseña?</a></p>
+                    <p>¿No tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const googleLoginBtn = document.getElementById('googleLoginBtn');
+            const googleStatus = document.getElementById('googleStatus');
+            
+            // Función para mostrar mensajes de estado
+            function showStatus(message, type) {
+                googleStatus.textContent = message;
+                googleStatus.className = 'status-message status-' + type;
+                googleStatus.style.display = 'block';
+                
+                // Ocultar el mensaje después de 5 segundos
+                setTimeout(() => {
+                    googleStatus.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Manejar clic en el botón de Google
+            googleLoginBtn.addEventListener('click', function() {
+                // Mostrar mensaje de carga
+                showStatus('Conectando con Google...', 'info');
+                
+                // Simular el proceso de autenticación con Google
+                // En una implementación real, aquí redirigirías al endpoint de OAuth de Google
+                setTimeout(() => {
+                    // Simular autenticación exitosa
+                    showStatus('¡Autenticación con Google exitosa! Redirigiendo...', 'success');
+                    
+                    // Redirigir después de un breve retraso (simulación)
+                    setTimeout(() => {
+                        // En una aplicación real, esto redirigiría a la URL de callback de Google
+                        window.location.href = '/dashboard?provider=google';
+                    }, 1500);
+                }, 2000);
+            });
+            
+            // Efectos visuales para los botones
+            const buttons = document.querySelectorAll('button, .social-btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+
+    </body>
+    </html>
