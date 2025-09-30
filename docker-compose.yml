@@ -4,7 +4,7 @@ services:
       context: . 
       dockerfile: Dockerfile
     ports:
-      - 5079:5000
+      - 5078:5000
     volumes:
       - .:/app
       - db_volume:/app  # Persistencia específica para el .db (opcional, pero recomendado)
