@@ -5,10 +5,8 @@ WORKDIR /app
 
 # Copiar requirements.txt e instalar dependencias
 COPY requirements.txt .
-RUN apk update \
-    && apk add --no-cache --virtual .build-deps gcc musl-dev \
-    && pip install --default-timeout=100 --no-cache-dir -r requirements.txt \
-    && apk del .build-deps
+
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Copiar el resto del código
 COPY . .
