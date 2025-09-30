@@ -1,17 +1,19 @@
 FROM python:3.13-alpine
 
-# Establecer el directorio de trabajo
+# Instalar dependencias del sistema para MySQL
+RUN apk add --no-cache mariadb-connector-c-dev \
+    && apk add --no-cache --virtual .build-deps build-base mariadb-dev
+
 WORKDIR /app
 
-# Copiar requirements.txt e instalar dependencias
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt 
+# Limpiar dependencias de build
+RUN apk del .build-deps
 
-# Copiar el resto del código
 COPY . .
 
 EXPOSE 5000
 
-CMD [ "python", "run.py" ]
-#CMD sh -c "gunicorn --bind 0.0.0.0:8081 --workers 4 --forwarded-allow-ips=*  wsgi:app"
+CMD ["python", "run.py"]
