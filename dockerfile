@@ -1,14 +1,19 @@
 FROM python:3.13-alpine
 
-# FIX: Dockerfile renamed from dockerfile
-RUN apk add --no-cache mariadb-connector-c-dev \
-    && apk add --no-cache --virtual .build-deps build-base mariadb-dev
-
+# Definir directorio de trabajo
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN apk del .build-deps
 
+# Copiar dependencias primero (para aprovechar la cache de Docker)
+COPY requirements.txt .
+
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el resto del proyecto
 COPY . .
+
+# Exponer el puerto de Flask
 EXPOSE 5000
+
+# Comando por defecto
 CMD ["python", "run.py"]
