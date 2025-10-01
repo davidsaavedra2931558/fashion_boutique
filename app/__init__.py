@@ -6,6 +6,10 @@ from flask_migrate import Migrate
 # ✅ ELIMINADA la importación circular: from app.models import Product
 import os
 
+# 👇 Agregar estas dos líneas
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Inicializar extensiones PRIMERO
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -17,8 +21,9 @@ def create_app():
     
     # 🔒 CONFIGURACIÓN BÁSICA
     app.config['SECRET_KEY'] = 'tu-clave-secreta-muy-segura-aqui'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/fashion_boutique'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/fashion_boutique'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
     
     # 📧 CONFIGURACIÓN DE GMAIL
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
