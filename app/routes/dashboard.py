@@ -3,6 +3,7 @@ from flask_login import login_required, current_user, logout_user
 from app import db
 from datetime import datetime, timedelta
 import random
+from werkzeug.security import generate_password_hash
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -16,7 +17,7 @@ def dashboard():
 def dashboard_stats():
     try:
         # Importar modelos aquí para evitar problemas de importación circular
-        from app.models import Product, Order, OrderDetail, User
+        from app.models1 import Product, Order, OrderDetail, User
         
         # Obtener estadísticas para el dashboard
         total_products = Product.query.count()
@@ -77,7 +78,7 @@ def dashboard_stats():
 @login_required
 def get_products():
     try:
-        from app.models import Product
+        from app.models1 import Product
         # OBTENER TODOS LOS PRODUCTOS SIN LÍMITE
         products = Product.query.all()
         return jsonify([{
@@ -98,7 +99,7 @@ def get_products():
 @login_required
 def add_product():
     try:
-        from app.models import Product
+        from app.models1 import Product
         data = request.get_json()
         new_product = Product(
             nameProduct=data['name'],
@@ -120,7 +121,7 @@ def add_product():
 @login_required
 def update_product(product_id):
     try:
-        from app.models import Product
+        from app.models1 import Product
         product = Product.query.get_or_404(product_id)
         data = request.get_json()
         
@@ -144,7 +145,7 @@ def update_product(product_id):
 @login_required
 def delete_product(product_id):
     try:
-        from app.models import Product
+        from app.models1 import Product
         product = Product.query.get_or_404(product_id)
         db.session.delete(product)
         db.session.commit()
@@ -152,13 +153,16 @@ def delete_product(product_id):
     except Exception as e:
         print(f"Error eliminando producto: {e}")
         return jsonify({'error': str(e)}), 500
-    
-# Rutas para gestión de usuarios
+
+# ==============================================
+# RUTAS PARA GESTIÓN DE USUARIOS - COMPLETAS
+# ==============================================
+
 @dashboard_bp.route('/api/users')
 @login_required
 def get_users():
     try:
-        from app.models import User
+        from app.models1 import User
         users = User.query.all()
         return jsonify([{
             'id': user.idUser,
@@ -172,11 +176,92 @@ def get_users():
         print(f"Error obteniendo usuarios: {e}")
         return jsonify({'error': str(e)}), 500
 
+@dashboard_bp.route('/api/users/<int:user_id>')
+@login_required
+def get_user(user_id):
+    try:
+        from app.models1 import User
+        user = User.query.get_or_404(user_id)
+        return jsonify({
+            'id': user.idUser,
+            'name': user.nameUser,
+            'email': user.emailUser,
+            'role': 'Administrador' if user.is_admin else 'Usuario',
+            'created_at': user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A',
+            'status': 'Activo'
+        })
+    except Exception as e:
+        print(f"Error obteniendo usuario: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@dashboard_bp.route('/api/users', methods=['POST'])
+@login_required
+def create_user():
+    try:
+        from app.models1 import User
+        data = request.get_json()
+        
+        # Validar campos requeridos
+        if not all(k in data for k in ['name', 'email', 'password']):
+            return jsonify({'error': 'Faltan campos requeridos: name, email, password'}), 400
+        
+        # Verificar si el usuario ya existe
+        if User.query.filter_by(emailUser=data['email']).first():
+            return jsonify({'error': 'El email ya está registrado'}), 400
+        
+        # Crear nuevo usuario
+        new_user = User(
+            nameUser=data['name'],
+            emailUser=data['email'],
+            passwordUser=generate_password_hash(data['password']),
+            is_admin=(data.get('role') == 'Administrador')
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return jsonify({'message': 'Usuario creado correctamente'})
+    except Exception as e:
+        print(f"Error creando usuario: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@dashboard_bp.route('/api/users/<int:user_id>', methods=['PUT'])
+@login_required
+def update_user(user_id):
+    try:
+        from app.models1 import User
+        user = User.query.get_or_404(user_id)
+        data = request.get_json()
+        
+        # No permitir editar el propio usuario si no es admin
+        if user.idUser == current_user.idUser and data.get('role') != 'Administrador':
+            return jsonify({'error': 'No puedes cambiar tu propio rol'}), 400
+        
+        # Actualizar campos
+        if 'name' in data:
+            user.nameUser = data['name']
+        if 'email' in data:
+            # Verificar que el email no esté en uso por otro usuario
+            existing_user = User.query.filter(User.emailUser == data['email'], User.idUser != user_id).first()
+            if existing_user:
+                return jsonify({'error': 'El email ya está en uso por otro usuario'}), 400
+            user.emailUser = data['email']
+        if 'role' in data:
+            user.is_admin = (data['role'] == 'Administrador')
+        if 'password' in data and data['password']:
+            user.passwordUser = generate_password_hash(data['password'])
+        
+        db.session.commit()
+        return jsonify({'message': 'Usuario actualizado correctamente'})
+    except Exception as e:
+        print(f"Error actualizando usuario: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @dashboard_bp.route('/api/users/<int:user_id>', methods=['DELETE'])
 @login_required
 def delete_user(user_id):
     try:
-        from app.models import User
+        from app.models1 import User
         user = User.query.get_or_404(user_id)
         
         # No permitir eliminar el propio usuario
@@ -190,12 +275,15 @@ def delete_user(user_id):
         print(f"Error eliminando usuario: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Rutas para categorías
+# ==============================================
+# RUTAS EXISTENTES (MANTENER)
+# ==============================================
+
 @dashboard_bp.route('/api/categories')
 @login_required
 def get_categories():
     try:
-        from app.models import Category
+        from app.models1 import Category
         categories = Category.query.all()
         return jsonify([{
             'id': category.idCategory,
@@ -217,7 +305,7 @@ def get_categories():
 @login_required
 def add_category():
     try:
-        from app.models import Category
+        from app.models1 import Category
         data = request.get_json()
         
         # Generar ID automático si no se proporciona
@@ -236,12 +324,11 @@ def add_category():
         print(f"Error agregando categoría: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Rutas para pedidos
 @dashboard_bp.route('/api/orders')
 @login_required
 def get_orders():
     try:
-        from app.models import Order, User
+        from app.models1 import Order, User
         orders = Order.query.all()
         return jsonify([{
             'id': order.idOrder,
@@ -260,7 +347,6 @@ def get_orders():
             {'id': 'ORD003', 'customer': 'Ana Martínez', 'date': '17/03/2023', 'amount': 210.75, 'status': 'Enviado', 'items': 3}
         ])
 
-# Rutas para reportes
 @dashboard_bp.route('/api/reports/sales')
 @login_required
 def get_sales_report():
@@ -280,7 +366,6 @@ def get_sales_report():
         print(f"Error generando reporte: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Ruta para configuración
 @dashboard_bp.route('/api/config')
 @login_required
 def get_config():
@@ -297,7 +382,6 @@ def get_config():
         print(f"Error obteniendo configuración: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Ruta para cerrar sesión
 @dashboard_bp.route('/logout')
 @login_required
 def logout():

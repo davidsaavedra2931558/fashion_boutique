@@ -11,13 +11,13 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #7f8c8d;
+            --secondary-color: #ffffffff;
+            --accent-color: #ffffffff;
             --light-bg: #f8f9fa;
-            --dark-text: #2c3e50;
-            --light-text: #ecf0f1;
+            --dark-text: #480792ff;
+            --light-text: #47c1dfff;
             --sidebar-width: 250px;
-            --border-color: #e0e0e0;
+            --border-color: #a7a7a7ff;
         }
         
         body {
@@ -630,19 +630,86 @@
     </div>
 </div>
 
-        <!-- Usuarios Section -->
+        <!-- Sección de Usuarios -->
         <div id="usuarios" class="content-section">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gestión de Usuarios</h2>
-                <div>
-                    <button class="btn btn-outline-primary me-2" id="refreshUsers">
-                        <i class="bi bi-arrow-clockwise"></i> Actualizar
-                    </button>
-                    <button class="btn btn-primary" id="addUserBtn" data-bs-toggle="modal" data-bs-target="#userModal">
-                        <i class="bi bi-plus-circle"></i> Nuevo Usuario
+            <!-- Encabezado -->
+            <div class="section-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>Gestión de Usuarios</h2>
+                        <p class="text-muted mb-0">Administra usuarios del sistema y envía invitaciones</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-outline-primary me-2" id="refreshUsers">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </button>
+                        <button class="btn btn-invite me-2" id="inviteUserBtn" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                            <i class="bi bi-envelope-plus"></i> Invitar Usuario
+                        </button>
+                        <button class="btn btn-primary" id="addUserBtn" data-bs-toggle="modal" data-bs-target="#userModal">
+                            <i class="bi bi-plus-circle"></i> Nuevo Usuario
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+                <!-- Modal para invitar usuario -->
+    <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inviteModalLabel"><i class="bi bi-envelope-plus me-2"></i>Invitar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div class="feature-icon mx-auto">
+                            <i class="bi bi-send-check text-white" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h5>Envía una invitación por correo</h5>
+                        <p class="text-muted">El usuario recibirá un enlace para completar su registro personalmente</p>
+                    </div>
+                    
+                    <form id="inviteForm">
+                        <div class="mb-3">
+                            <label for="inviteEmail" class="form-label">Correo Electrónico *</label>
+                            <input type="email" class="form-control" id="inviteEmail" placeholder="correo@ejemplo.com" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="inviteRole" class="form-label">Tipo de Usuario *</label>
+                            <select class="form-select" id="inviteRole" required>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="inviteMessage" class="form-label">Mensaje Personalizado (Opcional)</label>
+                            <textarea class="form-control" id="inviteMessage" rows="3" placeholder="Agrega un mensaje personal para la invitación..."></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="bi bi-lightbulb"></i> 
+                                <strong>Ventaja:</strong> El usuario establecerá su propia contraseña durante el registro
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-invite" id="sendInvite">
+                        <i class="bi bi-send me-2"></i>
+                        <span id="sendInviteText">Enviar Invitación</span>
+                        <span id="sendInviteSpinner" class="d-none">
+                            <span class="spinner-border spinner-border-sm"></span> Enviando...
+                        </span>
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
 
             <div class="table-container">
                 <div class="table-responsive">
@@ -672,63 +739,113 @@
             </div>
         </div>
 
-        <!-- Modal para agregar/editar usuario -->
-        <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="userModalLabel">Agregar Nuevo Usuario</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="userForm">
-                            <input type="hidden" id="userId">
-                            <div class="mb-3">
-                                <label for="userName" class="form-label">Nombre Completo *</label>
-                                <input type="text" class="form-control" id="userName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="userEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="userEmail" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="userPassword" class="form-label">Contraseña *</label>
-                                <input type="password" class="form-control" id="userPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="userRole" class="form-label">Rol *</label>
-                                <select class="form-select" id="userRole" required>
-                                    <option value="">Seleccionar rol</option>
-                                    <option value="Administrador">Administrador</option>
-                                    <option value="Cliente">Cliente</option>
-                                    <option value="Vendedor">Vendedor</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="userStatus" class="form-label">Estado *</label>
-                                <select class="form-select" id="userStatus" required>
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                </select>
-                            </div>
-                            <div class="alert alert-info">
-                                <small>Los campos marcados con * son obligatorios.</small>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="saveUser">
-                            <span id="saveUserText">Guardar Usuario</span>
-                            <span id="saveUserSpinner" class="d-none">
-                                <span class="db-spinner spinner-border-sm"></span> Guardando...
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+       <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enviar invitación
+    document.getElementById('sendInvite').addEventListener('click', function() {
+        const email = document.getElementById('inviteEmail').value;
+        const role = document.getElementById('inviteRole').value;
+        const message = document.getElementById('inviteMessage').value;
+        
+        if (!email) {
+            alert('Por favor, ingresa un correo electrónico');
+            return;
+        }
+        
+        // Validar formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Por favor, ingresa un correo electrónico válido');
+            return;
+        }
+        
+        // Mostrar loading
+        const btn = this;
+        const originalText = btn.querySelector('#sendInviteText');
+        const spinner = btn.querySelector('#sendInviteSpinner');
+        
+        originalText.classList.add('d-none');
+        spinner.classList.remove('d-none');
+        btn.disabled = true;
+        
+        // Enviar datos al servidor Flask
+        fetch('/send_invitation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                role: role,
+                message: message
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('inviteModal'));
+                modal.hide();
+                
+                // Mostrar mensaje de éxito
+                showNotification(data.message, 'success');
+                
+                // Limpiar formulario
+                document.getElementById('inviteForm').reset();
+            } else {
+                showNotification('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error de conexión: ' + error.message, 'error');
+        })
+        .finally(() => {
+            // Ocultar loading
+            originalText.classList.remove('d-none');
+            spinner.classList.add('d-none');
+            btn.disabled = false;
+        });
+    });
+    
+    // Función para mostrar notificaciones
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        
+        notification.innerHTML = `
+            <strong>${type === 'success' ? '✅ Éxito:' : '❌ Error:'}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
+    
+    // Prevenir envío del formulario
+    document.getElementById('inviteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+    });
+});
+</script>
         <!-- Otras secciones (pedidos, reportes, configuración) -->
         <div id="pedidos" class="content-section">
             <h2>Gestión de Pedidos</h2>
@@ -1420,4 +1537,3 @@
     </script>
 </body>
 </html>
-

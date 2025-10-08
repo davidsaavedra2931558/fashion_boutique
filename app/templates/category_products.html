@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTURO CALLE - {{ category_name|title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pure-white: #ffffff;
+            --off-white: #f8f9fa;
+            --light-gray: #e9ecef;
+            --medium-gray: #6c757d;
+            --dark-gray: #495057;
+            --charcoal: #343a40;
+            --pure-black: #000000;
+            --border-light: #dee2e6;
+            --border-dark: #adb5bd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--pure-white);
+            color: var(--pure-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Top Header - Minimalista */
+        .top-header {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            padding: 0.8rem 0;
+            font-size: 0.75rem;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .top-header a {
+            color: var(--pure-white);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .top-header a:hover {
+            opacity: 0.8;
+        }
+
+        /* Main Navbar - Elegante */
+        .main-navbar {
+            background: var(--pure-white);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: var(--pure-black);
+            font-size: 1.8rem;
+            font-weight: 300;
+            text-decoration: none;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 1.5rem 0;
+        }
+
+        /* Menú Principal - Minimalista */
+        .main-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .nav-item {
+            position: relative;
+            cursor: pointer;
+            padding: 1.5rem 0;
+        }
+
+        .nav-item > span {
+            color: var(--pure-black);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            position: relative;
+            white-space: nowrap;
+            display: block;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-item:hover > span {
+            color: var(--dark-gray);
+        }
+
+        /* Menú Desplegable - Blanco y Negro */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--pure-white);
+            width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 1px solid var(--border-light);
+            display: none;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-container {
+            display: flex;
+            padding: 2.5rem;
+            gap: 2.5rem;
+        }
+
+        .dropdown-column {
+            flex: 1;
+        }
+
+        .dropdown-column h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--pure-black);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--pure-black);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .dropdown-column ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dropdown-column li {
+            margin-bottom: 0.8rem;
+        }
+
+        .dropdown-column a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 0.3rem 0;
+            letter-spacing: 1px;
+        }
+
+        .dropdown-column a:hover {
+            color: var(--pure-black);
+            transform: translateX(5px);
+            font-weight: 500;
+        }
+
+        .sale-link {
+            color: var(--pure-black) !important;
+            font-weight: 600 !important;
+        }
+
+        /* Search Bar - Minimalista */
+        .search-container {
+            position: relative;
+            flex: 0 1 350px;
+            margin: 0 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0;
+            font-size: 0.85rem;
+            background: var(--pure-white);
+            letter-spacing: 1px;
+            color: var(--pure-black);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--pure-black);
+            background: var(--pure-white);
+            box-shadow: none;
+        }
+
+        /* Auth Buttons - Elegantes */
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 0;
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            border: 1px solid var(--pure-black);
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--pure-black);
+            border: 1px solid var(--pure-black);
+        }
+
+        .btn-outline:hover {
+            background: var(--pure-black);
+            color: var(--pure-white);
+        }
+
+        .btn-primary {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            border: 1px solid var(--pure-black);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--pure-black);
+        }
+
+        .cart-badge {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Breadcrumb - Minimalista */
+        .breadcrumb {
+            background: var(--off-white);
+            padding: 1.5rem 2rem;
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            border-bottom: 1px solid var(--border-light);
+            letter-spacing: 1px;
+        }
+
+        .breadcrumb a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--pure-black);
+        }
+
+        /* Hero Banner - Elegante */
+        .hero-banner {
+            background: var(--pure-white);
+            color: var(--pure-black);
+            padding: 5rem 2rem;
+            text-align: center;
+            margin-bottom: 0;
+            position: relative;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .hero-banner h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .hero-banner p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: var(--medium-gray);
+            letter-spacing: 1px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Products Section - Minimalista */
+        .products-section {
+            padding: 4rem 2rem;
+            background: var(--pure-white);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--pure-black);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.7rem 1.2rem;
+            border: 1px solid var(--border-light);
+            background: var(--pure-white);
+            border-radius: 0;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: var(--pure-black);
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.7rem;
+            border: 1px solid var(--border-light);
+            background: var(--pure-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pure-black);
+        }
+
+        .view-btn.active {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            border-color: var(--pure-black);
+        }
+
+        .view-btn:hover {
+            border-color: var(--pure-black);
+        }
+
+        /* Products Grid - Elegante */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: var(--pure-white);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid var(--border-light);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--pure-black);
+        }
+
+        .product-image {
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+            background: var(--off-white);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--pure-black);
+            color: var(--pure-white);
+            padding: 0.4rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            z-index: 2;
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .product-action-btn {
+            width: 45px;
+            height: 45px;
+            background: var(--pure-white);
+            border: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--pure-black);
+            text-decoration: none;
+        }
+
+        .product-action-btn:hover {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            color: var(--pure-black);
+            text-transform: uppercase;
+        }
+
+        .product-category {
+            color: var(--medium-gray);
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--pure-black);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .product-stock {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            margin-bottom: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .product-stock.out-of-stock {
+            color: var(--medium-gray);
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 0.6rem 1rem;
+            font-size: 0.7rem;
+        }
+
+        /* Footer - Minimalista */
+        .footer {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--pure-white);
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 1px;
+            background: var(--pure-white);
+        }
+
+        .footer-section p, .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            margin-bottom: 0.8rem;
+            display: block;
+            transition: all 0.3s ease;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .footer-section a:hover {
+            color: var(--pure-white);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0;
+        }
+
+        .social-links a:hover {
+            background: var(--pure-white);
+            color: var(--pure-black);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #999;
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Paginación - Minimalista */
+        .pagination {
+            margin-top: 3rem;
+        }
+
+        .page-link {
+            border: 1px solid var(--border-light);
+            color: var(--pure-black);
+            background: var(--pure-white);
+            padding: 0.7rem 1rem;
+            border-radius: 0;
+            font-size: 0.8rem;
+        }
+
+        .page-link:hover {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            border-color: var(--pure-black);
+        }
+
+        .page-item.active .page-link {
+            background: var(--pure-black);
+            color: var(--pure-white);
+            border-color: var(--pure-black);
+        }
+
+        .page-item.disabled .page-link {
+            color: var(--medium-gray);
+            background: var(--off-white);
+            border-color: var(--border-light);
+        }
+
+        /* Mensaje sin productos */
+        .no-products {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--medium-gray);
+        }
+
+        .no-products h4 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dropdown-menu {
+                width: 700px;
+            }
+            
+            .dropdown-container {
+                padding: 2rem;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-menu {
+                display: none;
+            }
+            
+            .search-container {
+                flex: 1;
+                margin: 0 1rem;
+            }
+            
+            .dropdown-menu {
+                width: 100vw;
+                left: -1rem;
+            }
+            
+            .dropdown-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .product-image {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-buttons {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.7rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-banner {
+                padding: 3rem 1rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="container">
+            <a href="#sale">COLECCIÓN EXCLUSIVA | ENVÍO GRATIS EN PEDIDOS SUPERIORES A $300</a>
+        </div>
+    </div>
+
+    <!-- Main Navbar -->
+    <nav class="main-navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">ARTURO CALLE</a>
+            
+            <!-- MENÚ DESPLEGABLE PROFESIONAL -->
+            <div class="main-menu">
+                <div class="nav-item" data-category="hombre">
+                    <span>HOMBRE</span>
+                    <div class="dropdown-menu hombre-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>ROPA</h3>
+                                <ul>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Camisas') }}">Camisas</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Pantalones') }}">Pantalones</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Jeans') }}">Jeans</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Polos') }}">Polos</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Camisetas') }}">Camisetas</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Buzos') }}">Buzos</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Suéteres') }}">Suéteres</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Chaquetas') }}">Chaquetas</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Blazers') }}">Blazers</a></li>
+                                </ul>
+                            </div>
+                            <!-- ... resto del menú igual ... -->
+                        </div>
+                    </div>
+                </div>
+                <!-- ... resto de menús ... -->
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="¿QUÉ BUSCAS?">
+            </div>
+
+            <div class="auth-buttons">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('cart.view_cart') }}" class="btn btn-outline position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if current_user.get_cart_count() > 0 %}
+                            <span class="cart-badge">{{ current_user.get_cart_count() }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb específico para categoría -->
+    <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">INICIO</a> / 
+        <a href="#hombre">HOMBRE</a> / 
+        <span>{{ category_name|title }}</span>
+    </div>
+
+    <!-- Header de Categoría - Minimalista -->
+    <section class="hero-banner">
+        <h1>{{ category_name|title }}</h1>
+        <p>Colección exclusiva de {{ category_name|lower }} con diseño atemporal</p>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="productos">
+        <div class="products-header">
+            <h2 class="section-title">{{ category_name|upper }}</h2>
+            <div class="filters">
+                <span style="font-weight: 400; color: var(--medium-gray); letter-spacing: 1px;">{{ products|length }} PRODUCTOS</span>
+                <select class="filter-select">
+                    <option>ORDENAR POR</option>
+                    <option>Precio: Menor a Mayor</option>
+                    <option>Precio: Mayor a Menor</option>
+                    <option>Nombre A-Z</option>
+                    <option>Nombre Z-A</option>
+                </select>
+                <div class="view-options">
+                    <button class="view-btn active"><i class="fas fa-th"></i></button>
+                    <button class="view-btn"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ product.image_url }}" 
+                         alt="{{ product.name }}"
+                         onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                    
+                    {% if product.price < 150 %}
+                    <div class="product-badge">NUEVO</div>
+                    {% endif %}
+                    
+                    <div class="product-overlay">
+                        <div class="product-actions">
+                            <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="product-action-btn">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button class="product-action-btn" onclick="addToCart({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-category">{{ product.category }}</p>
+                    
+                    <div class="product-price">
+                        ${{ "%.2f"|format(product.price) }}
+                    </div>
+                    
+                    <div class="product-stock {% if product.stock <= 0 %}out-of-stock{% endif %}">
+                        {% if product.stock > 0 %}
+                            {{ product.stock }} disponibles
+                        {% else %}
+                            Agotado
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-buttons">
+                        <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-eye"></i> VER
+                        </a>
+                        {% if product.stock > 0 %}
+                        <button class="btn btn-primary btn-sm" onclick="addToCart({{ product.id }})">
+                            <i class="fas fa-cart-plus"></i> AÑADIR
+                        </button>
+                        {% else %}
+                        <button class="btn btn-outline btn-sm" disabled>
+                            <i class="fas fa-times"></i> AGOTADO
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-products">
+                <h4>NO HAY PRODUCTOS DISPONIBLES EN {{ category_name|upper }}</h4>
+                <p style="margin-bottom: 2rem;">Pronto tendremos nuevos productos en stock</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">VOLVER AL INICIO</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if total_pages and total_pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                {% for page_num in range(1, total_pages + 1) %}
+                    <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% endfor %}
+
+                <li class="page-item {% if not has_next %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ARTURO CALLE</h3>
+                <p>Elegancia atemporal y diseño sofisticado para el hombre moderno.</p>
+            </div>
+            <div class="footer-section">
+                <h3>CATEGORÍAS</h3>
+                <a href="#hombre">Hombre</a>
+                <a href="#mujer">Mujer</a>
+                <a href="#kids">Kids</a>
+                <a href="#zapatos">Zapatos</a>
+                <a href="#accesorios">Accesorios</a>
+            </div>
+            <div class="footer-section">
+                <h3>CONTACTO</h3>
+                <p>+1 (555) 123-4567</p>
+                <p>clientes@arturocalle.com</p>
+                <p>Bogotá, Colombia</p>
+            </div>
+            <div class="footer-section">
+                <h3>SÍGUENOS</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ARTURO CALLE. TODOS LOS DERECHOS RESERVADOS.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // View options functionality
+            const viewButtons = document.querySelectorAll('.view-btn');
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const productsGrid = document.querySelector('.products-grid');
+                    if (this.querySelector('.fa-list')) {
+                        productsGrid.style.gridTemplateColumns = '1fr';
+                    } else {
+                        productsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+                    }
+                });
+            });
+
+            // Menú desplegable functionality
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.nav-item')) {
+                    closeAllMenus();
+                }
+            });
+            
+            function closeAllMenus() {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                    menu.style.opacity = '0';
+                });
+            }
+            
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    closeAllMenus();
+                    const menu = this.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'block';
+                        setTimeout(() => {
+                            menu.style.opacity = '1';
+                            menu.style.transform = 'translateY(0)';
+                        }, 10);
+                    }
+                });
+            });
+
+            // Add your existing addToCart function here
+            window.addToCart = function(productId) {
+                {% if current_user.is_authenticated %}
+                    fetch('{{ url_for("cart.add_to_cart") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            quantity: 1
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Producto agregado al carrito');
+                            updateCartCount(data.cart_count);
+                        } else {
+                            showNotification('Error: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error al agregar al carrito', 'error');
+                    });
+                {% else %}
+                    showNotification('Por favor inicia sesión para agregar productos al carrito', 'warning');
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('auth.login') }}";
+                    }, 2000);
+                {% endif %}
+            };
+
+            function showNotification(message, type = 'success') {
+                // Tu función de notificación existente
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: var(--pure-black);
+                    color: var(--pure-white);
+                    padding: 1rem 2rem;
+                    border-radius: 0;
+                    z-index: 10000;
+                    font-weight: 400;
+                    letter-spacing: 1px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    border: 1px solid var(--pure-black);
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            function updateCartCount(count) {
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    if (count > 0) {
+                        cartBadge.textContent = count;
+                        cartBadge.style.display = 'flex';
+                    } else {
+                        cartBadge.style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

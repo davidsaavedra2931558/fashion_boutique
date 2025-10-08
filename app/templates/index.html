@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Boutique - Elegancia y Estilo</title>
+    <title> Fashion Boutique - Elegancia y Estilo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -16,7 +16,9 @@
             --border-gray: #dee2e6;
             --text-light: #f8f9fa;
             --text-dark: #212529;
-            --accent-color: #c8a97e; /* Color dorado elegante inspirado en Arturo Calle */
+            --accent-color: #c8a97e;
+            --sale-red: #e74c3c;
+            --gold: #d4af37;
         }
 
         * {
@@ -33,26 +35,36 @@
             overflow-x: hidden;
         }
 
-        /* Navbar estilo Arturo Calle */
-        .navbar {
+        /* Top Header */
+        .top-header {
+            background: var(--primary-black);
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .top-header a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* Main Navbar */
+        .main-navbar {
             background: #ffffff;
-            padding: 1.2rem 0;
-            position: fixed;
-            width: 100%;
+            padding: 0;
+            position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid var(--border-gray);
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled {
-            padding: 0.8rem 0;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -63,56 +75,176 @@
         .logo {
             color: var(--primary-black);
             font-size: 1.8rem;
-            font-weight: 300;
+            font-weight: 700;
             text-decoration: none;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            padding: 1rem 0;
         }
 
-        .nav-menu {
+        /* Menú Principal Mejorado */
+        .main-menu {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
             align-items: center;
+            flex-wrap: wrap;
+            position: relative;
         }
 
-        .nav-menu a {
+        .nav-item {
+            position: relative;
+            cursor: pointer;
+            padding: 1.5rem 0;
+        }
+
+        .nav-item > span {
             color: var(--text-dark);
             text-decoration: none;
-            font-weight: 400;
+            font-weight: 500;
             transition: all 0.3s ease;
-            padding: 0.5rem 0;
-            letter-spacing: 1px;
-            position: relative;
             font-size: 0.9rem;
             text-transform: uppercase;
+            position: relative;
+            white-space: nowrap;
+            display: block;
+            letter-spacing: 1px;
         }
 
-        .nav-menu a::after {
+        .nav-item:hover > span {
+            color: var(--accent-color);
+        }
+
+        /* Menú Desplegable Profesional */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            width: 900px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-gray);
+            display: none;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-container {
+            display: flex;
+            padding: 2.5rem;
+            gap: 2.5rem;
+        }
+
+        .dropdown-column {
+            flex: 1;
+        }
+
+        .dropdown-column h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .dropdown-column ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dropdown-column li {
+            margin-bottom: 0.8rem;
+        }
+
+        .dropdown-column a {
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 0.3rem 0;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-column a:hover {
+            color: var(--primary-black);
+            transform: translateX(5px);
+            font-weight: 500;
+        }
+
+        .sale-link {
+            color: var(--sale-red) !important;
+            font-weight: 700 !important;
+        }
+
+        .sale-text {
+            color: var(--sale-red) !important;
+            font-weight: 700 !important;
+        }
+
+        /* Efectos hover mejorados */
+        .nav-item::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 0;
-            height: 1px;
-            background: var(--primary-black);
+            height: 2px;
+            background: var(--accent-color);
             transition: width 0.3s ease;
         }
 
-        .nav-menu a:hover::after {
+        .nav-item:hover::after {
             width: 100%;
         }
 
+        /* Search Bar Mejorada */
+        .search-container {
+            position: relative;
+            flex: 0 1 350px;
+            margin: 0 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 0;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            letter-spacing: 1px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-black);
+            background: white;
+            box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.1);
+        }
+
+        /* Auth Buttons */
         .auth-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
-        /* BOTONES estilo minimalista */
         .btn {
             padding: 0.7rem 1.5rem;
             border-radius: 0;
             text-decoration: none;
-            font-weight: 400;
+            font-weight: 500;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
@@ -123,17 +255,6 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--primary-black);
-            color: white;
-            border: 1px solid var(--primary-black);
-        }
-
-        .btn-primary:hover {
-            background: transparent;
-            color: var(--primary-black);
         }
 
         .btn-outline {
@@ -147,101 +268,118 @@
             color: white;
         }
 
-        /* Hero Section estilo minimalista */
-        .hero {
-            background: #f8f9fa;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            margin-top: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--primary-black);
-        }
-
-        .hero h1 span {
-            font-weight: 400;
-            position: relative;
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            color: var(--dark-gray);
-            font-weight: 300;
-            letter-spacing: 1px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-button {
+        .btn-primary {
             background: var(--primary-black);
             color: white;
-            padding: 1rem 2.5rem;
-            font-size: 0.9rem;
-            border-radius: 0;
-            text-decoration: none;
-            font-weight: 400;
-            transition: all 0.3s ease;
-            display: inline-block;
-            letter-spacing: 1px;
-            text-transform: uppercase;
             border: 1px solid var(--primary-black);
         }
 
-        .cta-button:hover {
+        .btn-primary:hover {
             background: transparent;
             color: var(--primary-black);
         }
 
-        /* Productos - Estilo Galería Elegante */
-        .featured-products {
+        .cart-badge {
+            background: var(--sale-red);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Hero Banner Mejorado */
+        .hero-banner {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
             padding: 6rem 2rem;
-            background: #ffffff;
+            text-align: center;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .sale-badge {
+            background: var(--sale-red);
+            color: white;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-banner p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Featured Categories */
+        .featured-categories {
+            padding: 4rem 2rem;
+            background: white;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 4rem;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
             color: var(--primary-black);
             font-weight: 300;
             letter-spacing: 3px;
             text-transform: uppercase;
             position: relative;
-            padding-bottom: 1rem;
         }
 
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
-            height: 1px;
-            background: var(--primary-black);
+            height: 2px;
+            background: var(--accent-color);
         }
 
-        .products-grid {
+        .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
@@ -249,17 +387,140 @@
             margin: 0 auto;
         }
 
+        .category-card {
+            background: white;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-gray);
+            text-decoration: none;
+            color: var(--text-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(200, 169, 126, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .category-card:hover::before {
+            left: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            color: var(--text-dark);
+            text-decoration: none;
+            border-color: var(--accent-color);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .category-subtitle {
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Products Section Mejorada */
+        .products-section {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.7rem 1.2rem;
+            border: 1px solid var(--border-gray);
+            background: white;
+            border-radius: 0;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.7rem;
+            border: 1px solid var(--border-gray);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn.active {
+            background: var(--primary-black);
+            color: white;
+            border-color: var(--primary-black);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .product-card {
             background: #ffffff;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             position: relative;
             border: 1px solid var(--border-gray);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
         }
 
         .product-image {
@@ -272,11 +533,25 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s ease;
         }
 
         .product-card:hover .product-image img {
-            transform: scale(1.05);
+            transform: scale(1.08);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--sale-red);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            z-index: 2;
         }
 
         .product-overlay {
@@ -285,12 +560,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: 1;
         }
 
         .product-card:hover .product-overlay {
@@ -303,8 +579,8 @@
         }
 
         .product-action-btn {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             background: #ffffff;
             border: none;
             border-radius: 0;
@@ -320,44 +596,58 @@
         .product-action-btn:hover {
             background: var(--primary-black);
             color: #ffffff;
+            transform: scale(1.1);
         }
 
         .product-info {
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
         }
 
         .product-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 400;
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
+            margin-bottom: 0.7rem;
+            letter-spacing: 1.2px;
             color: var(--primary-black);
             text-transform: uppercase;
         }
 
         .product-category {
             color: var(--dark-gray);
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .product-price {
-            font-size: 1.2rem;
-            font-weight: 400;
+            font-size: 1.3rem;
+            font-weight: 500;
             color: var(--primary-black);
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             letter-spacing: 1px;
         }
 
+        .product-price .old-price {
+            text-decoration: line-through;
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            margin-right: 0.7rem;
+        }
+
+        .product-price .sale-price {
+            color: var(--sale-red);
+            font-weight: 700;
+        }
+
         .product-stock {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #28a745;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 500;
         }
 
         .product-stock.out-of-stock {
@@ -366,106 +656,20 @@
 
         .product-buttons {
             display: flex;
-            gap: 0.8rem;
+            gap: 1rem;
             justify-content: center;
         }
 
         .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.7rem;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.75rem;
         }
 
-        /* Colecciones destacadas */
-        .collections {
-            padding: 4rem 2rem;
-            background: #f8f9fa;
-        }
-
-        .collections-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .collection-card {
-            position: relative;
-            height: 400px;
-            overflow: hidden;
-        }
-
-        .collection-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .collection-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .collection-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .collection-overlay:hover {
-            background: rgba(0,0,0,0.5);
-        }
-
-        .collection-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Paginación */
-        .pagination {
-            margin-top: 5rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .page-link {
-            background-color: transparent;
-            border: 1px solid var(--border-gray);
-            color: var(--text-dark);
-            padding: 0.75rem 1.25rem;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border-radius: 0;
-        }
-
-        .page-link:hover {
-            background-color: var(--primary-black);
-            color: white;
-            border-color: var(--primary-black);
-        }
-
-        .page-item.active .page-link {
-            background-color: var(--primary-black);
-            color: white;
-            border-color: var(--primary-black);
-        }
-
-        /* Footer */
+        /* Footer Mejorado */
         .footer {
             background: var(--primary-black);
             color: white;
-            padding: 4rem 2rem 2rem;
+            padding: 5rem 2rem 2rem;
         }
 
         .footer-content {
@@ -477,14 +681,14 @@
         }
 
         .footer-section h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            margin-bottom: 1.8rem;
             color: white;
             font-weight: 400;
             letter-spacing: 2px;
             text-transform: uppercase;
             position: relative;
-            padding-bottom: 0.8rem;
+            padding-bottom: 1rem;
         }
 
         .footer-section h3::after {
@@ -492,33 +696,35 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 40px;
-            height: 1px;
-            background: white;
+            width: 50px;
+            height: 2px;
+            background: var(--accent-color);
         }
 
         .footer-section p, .footer-section a {
             color: #ccc;
             text-decoration: none;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             display: block;
             transition: all 0.3s ease;
             font-weight: 300;
+            letter-spacing: 0.5px;
         }
 
         .footer-section a:hover {
             color: white;
+            transform: translateX(5px);
         }
 
         .social-links {
             display: flex;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
         .social-links a {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 0;
             display: flex;
@@ -526,11 +732,13 @@
             justify-content: center;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0;
         }
 
         .social-links a:hover {
             background: white;
             color: var(--primary-black);
+            transform: translateY(-3px);
         }
 
         .footer-bottom {
@@ -541,123 +749,448 @@
             color: #999;
             font-size: 0.9rem;
             font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: #f8f9fa;
+            padding: 1rem 2rem;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .breadcrumb a {
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-black);
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .dropdown-menu {
+                width: 700px;
+            }
+            
+            .dropdown-container {
+                padding: 2rem;
+                gap: 2rem;
+            }
+        }
+
         @media (max-width: 768px) {
-            .nav-menu {
+            .main-menu {
                 display: none;
             }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
+            
+            .search-container {
+                flex: 1;
+                margin: 0 1rem;
             }
             
-            .section-title {
-                font-size: 1.5rem;
+            .dropdown-menu {
+                width: 100vw;
+                left: -2rem;
             }
             
+            .dropdown-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 2.5rem;
+            }
+
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+
+            .product-image {
+                height: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
             .auth-buttons {
-                gap: 0.8rem;
+                gap: 0.5rem;
             }
-            
+
             .btn {
                 padding: 0.6rem 1rem;
                 font-size: 0.7rem;
             }
-            
-            .products-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+            .categories-grid {
+                grid-template-columns: 1fr;
             }
-            
-            .product-image {
-                height: 300px;
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-banner {
+                padding: 4rem 1rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="container">
+            <a href="#sale">CONOCE NUESTRO SALE AQUÍ</a>
+        </div>
+    </div>
+
+    <!-- Main Navbar -->
+    <nav class="main-navbar">
         <div class="nav-container">
-            <a href="/" class="logo">Fashion Boutique</a>
-            <div class="nav-menu">
-                <a href="/">Inicio</a>
-                <a href="#productos">Productos</a>
-                <a href="#colecciones">Colecciones</a>
-                <a href="#contacto">Contacto</a>
+            <a href="{{ url_for('auth.home') }}" class="logo">ARTURO CALLE</a>
+            
+            <!-- MENÚ DESPLEGABLE PROFESIONAL -->
+            <div class="main-menu">
+                <div class="nav-item" data-category="hombre">
+                    <span>HOMBRE</span>
+                    <div class="dropdown-menu hombre-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>ROPA</h3>
+                                <ul>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Camisas') }}">Camisas</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Pantalones') }}">Pantalones</a></li>
+                                    <li><a href="{{ url_for('products.category_products_page', category_name='Pantalones') }}">Polos</a></li> 
+                                    <li><a href="{{ url_for('products.get_products_by_category', category_name='Blazers') }}">Blazers</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>ROPA INTERIOR Y DESCANSO</h3>
+                                <ul>
+                                    <li><a href="#">Pijamas</a></li>
+                                    <li><a href="#">Bóxers</a></li>
+                                    <li><a href="#">Medias</a></li>
+                                    <li><a href="#">Camiseta Interior</a></li>
+                                </ul>
+                                
+                                <h3>ACCESORIOS</h3>
+                                <ul>
+                                    <li><a href="#">Cinturones</a></li>
+                                    <li><a href="#">Billeteras</a></li>
+                                    <li><a href="#">Perfumes</a></li>
+                                    <li><a href="#">Maletines y Morrales</a></li>
+                                    <li><a href="#">Mochilas de Viaje</a></li>
+                                    <li><a href="#">Corbatas</a></li>
+                                    <li><a href="#">Gafas</a></li>
+                                    <li><a href="#">Mancomas</a></li>
+                                    <li><a href="#">Gorras y Boinas</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>ZAPATOS</h3>
+                                <ul>
+                                    <li><a href="#">Tenis</a></li>
+                                    <li><a href="#">Formales</a></li>
+                                    <li><a href="#">Casuales</a></li>
+                                    <li><a href="#">Mocasines</a></li>
+                                    <li><a href="#">Botas</a></li>
+                                    <li><a href="#">Sandalias</a></li>
+                                </ul>
+                                
+                                <h3>COLECCIONES</h3>
+                                <ul>
+                                    <li><a href="#">Nuevo</a></li>
+                                    <li><a href="#">Formal</a></li>
+                                    <li><a href="#">Business</a></li>
+                                    <li><a href="#">Casual</a></li>
+                                    <li><a href="#">Bono Regalo</a></li>
+                                    <li><a href="#" class="sale-text">SALE</a></li>
+                                    <li><a href="#">Marvel</a></li>
+                                    <li><a href="#">Colores</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item" data-category="mujer">
+                    <span>MUJER</span>
+                    <div class="dropdown-menu mujer-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>ROPA</h3>
+                                <ul>
+                                    <li><a href="#">Blusas</a></li>
+                                    <li><a href="#">Vestidos</a></li>
+                                    <li><a href="#">Faldas</a></li>
+                                    <li><a href="#">Pantalones</a></li>
+                                    <li><a href="#">Jeans</a></li>
+                                    <li><a href="#">Chaquetas</a></li>
+                                    <li><a href="#">Suéteres</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>ROPA INTERIOR</h3>
+                                <ul>
+                                    <li><a href="#">Pijamas</a></li>
+                                    <li><a href="#">Lencería</a></li>
+                                </ul>
+                                
+                                <h3>ACCESORIOS</h3>
+                                <ul>
+                                    <li><a href="#">Bolsos</a></li>
+                                    <li><a href="#">Joyeria</a></li>
+                                    <li><a href="#">Bufandas</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>ZAPATOS</h3>
+                                <ul>
+                                    <li><a href="#">Tacones</a></li>
+                                    <li><a href="#">Flats</a></li>
+                                    <li><a href="#">Deportivos</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item" data-category="kids">
+                    <span>KIDS</span>
+                    <div class="dropdown-menu kids-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>NIÑOS</h3>
+                                <ul>
+                                    <li><a href="#">Camisas</a></li>
+                                    <li><a href="#">Pantalones</a></li>
+                                    <li><a href="#">Jeans</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>NIÑAS</h3>
+                                <ul>
+                                    <li><a href="#">Vestidos</a></li>
+                                    <li><a href="#">Faldas</a></li>
+                                    <li><a href="#">Blusas</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>BEBÉS</h3>
+                                <ul>
+                                    <li><a href="#">Conjuntos</a></li>
+                                    <li><a href="#">Ropa Interior</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item" data-category="zapatos">
+                    <span>ZAPATOS</span>
+                    <div class="dropdown-menu zapatos-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>HOMBRE</h3>
+                                <ul>
+                                    <li><a href="#">Tenis</a></li>
+                                    <li><a href="#">Formales</a></li>
+                                    <li><a href="#">Casuales</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>MUJER</h3>
+                                <ul>
+                                    <li><a href="#">Tacones</a></li>
+                                    <li><a href="#">Flats</a></li>
+                                    <li><a href="#">Deportivos</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>KIDS</h3>
+                                <ul>
+                                    <li><a href="#">Escolares</a></li>
+                                    <li><a href="#">Deportivos</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item" data-category="accesorios">
+                    <span>ACCESORIOS</span>
+                    <div class="dropdown-menu accesorios-menu">
+                        <div class="dropdown-container">
+                            <div class="dropdown-column">
+                                <h3>HOMBRE</h3>
+                                <ul>
+                                    <li><a href="#">Relojes</a></li>
+                                    <li><a href="#">Cinturones</a></li>
+                                    <li><a href="#">Corbatas</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>MUJER</h3>
+                                <ul>
+                                    <li><a href="#">Bolsos</a></li>
+                                    <li><a href="#">Joyeria</a></li>
+                                    <li><a href="#">Bufandas</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>UNISEX</h3>
+                                <ul>
+                                    <li><a href="#">Gafas de Sol</a></li>
+                                    <li><a href="#">Mochilas</a></li>
+                                    <li><a href="#">Gorras</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#sale" class="sale-link">SALE</a>
             </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="¿QUÉ BUSCAS?">
+            </div>
+
             <div class="auth-buttons">
                 {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('cart.view_cart') }}" class="btn btn-outline position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if current_user.get_cart_count() > 0 %}
+                            <span class="cart-badge">{{ current_user.get_cart_count() }}</span>
+                        {% endif %}
+                    </a>
                     <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline">
-                        <i class="fas fa-user"></i> Mi Cuenta
+                        <i class="fas fa-user"></i>
                     </a>
                     <a href="{{ url_for('auth.logout') }}" class="btn btn-primary">
-                        <i class="fas fa-sign-out-alt"></i> Salir
+                        <i class="fas fa-sign-out-alt"></i>
                     </a>
                 {% else %}
                     <a href="{{ url_for('auth.login') }}" class="btn btn-outline">
-                        <i class="fas fa-sign-in-alt"></i> Ingresar
+                        <i class="fas fa-sign-in-alt"></i>
                     </a>
                     <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
-                        <i class="fas fa-user-plus"></i> Registrarse
+                        <i class="fas fa-user-plus"></i>
                     </a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Elegancia <span>Atemporal</span></h1>
-            <p>Descubre nuestra colección exclusiva inspirada en la sofisticación y el estilo perdurable</p>
-            <a href="#productos" class="cta-button">Explorar Colección</a>
-        </div>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{{ url_for('auth.home') }}">ARTURO CALLE</a> / <a href="#mujer">MUJER</a> / <a href="#accesorios">ACCESORIOS</a>
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="sale-badge">SALE 50%</div>
+        <h1>ELECANCIA ATEMPORAL</h1>
+        <p>Descubre nuestra colección exclusiva con descuentos especiales</p>
+        <a href="#sale" class="btn btn-primary">VER OFERTAS</a>
     </section>
 
-    <!-- Productos -->
-    <section class="featured-products" id="productos">
-        <h2 class="section-title">Productos Destacados</h2>
+  
+    <!-- Products Section -->
+    <section class="products-section" id="productos">
+        <div class="products-header">
+            <h2 class="section-title" style="margin-bottom: 0;">COLECCIÓN DESTACADA</h2>
+            <div class="filters">
+                <span style="font-weight: 500; color: var(--dark-gray);">{{ products|length }} PRODUCTOS</span>
+                <select class="filter-select">
+                    <option>ORDENAR POR</option>
+                    <option>Precio: Menor a Mayor</option>
+                    <option>Precio: Mayor a Menor</option>
+                    <option>Nombre A-Z</option>
+                    <option>Nombre Z-A</option>
+                </select>
+                <div class="view-options">
+                    <button class="view-btn active"><i class="fas fa-th"></i></button>
+                    <button class="view-btn"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+        </div>
+
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
                 <div class="product-image">
-                    <img src="{{ product.image_url or 'https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
-                         alt="{{ product.name }}"
+                    <img src="{{ product.image or product.image_url or 'https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
+                         alt="{{ product.nameProduct or product.name }}"
                          onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                    
+                    {% if loop.index <= 2 %}
+                    <div class="product-badge">SALE</div>
+                    {% endif %}
+                    
                     <div class="product-overlay">
                         <div class="product-actions">
-                            <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="product-action-btn">
+                            {% set product_id = product.idProduct if product.idProduct is defined else product.id %}
+                            <a href="{{ url_for('products.product_detail', product_id=product_id) if product_id else '#' }}" class="product-action-btn">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <button class="product-action-btn" onclick="addToCart({{ product.id }})">
+                            <button class="product-action-btn" onclick="addToCart({{ product_id }})" {% if (product.stock or 0) <= 0 %}disabled{% endif %}>
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-title">{{ product.name }}</h3>
-                    <p class="product-category">{{ product.category }}</p>
-                    <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
-                    <div class="product-stock {% if product.stock <= 0 %}out-of-stock{% endif %}">
-                        {% if product.stock > 0 %}
+                    <h3 class="product-title">{{ product.nameProduct or product.name }}</h3>
+                    <p class="product-category">{{ product.category or 'Sin categoría' }}</p>
+                    
+                    <div class="product-price">
+                        {% set price = product.price | float %}
+                        {% if loop.index <= 2 %}
+                            <span class="old-price">${{ "%.2f"|format(price * 1.5) }}</span>
+                            <span class="sale-price">${{ "%.2f"|format(price) }}</span>
+                        {% else %}
+                            ${{ "%.2f"|format(price) }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-stock {% if (product.stock or 0) <= 0 %}out-of-stock{% endif %}">
+                        {% if (product.stock or 0) > 0 %}
                             {{ product.stock }} disponibles
                         {% else %}
                             Agotado
                         {% endif %}
                     </div>
+                    
                     <div class="product-buttons">
-                        <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">
-                            <i class="fas fa-eye"></i> Ver Detalles
+                        {% set product_id = product.idProduct if product.idProduct is defined else product.id %}
+                        <a href="{{ url_for('products.product_detail', product_id=product_id) if product_id else '#' }}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-eye"></i> Detalles
                         </a>
-                        {% if product.stock > 0 %}
-                        <button class="btn btn-primary btn-sm" onclick="addToCart({{ product.id }})">
+                        {% if (product.stock or 0) > 0 %}
+                        <button class="btn btn-primary btn-sm" onclick="addToCart({{ product_id }})">
                             <i class="fas fa-cart-plus"></i> Añadir
                         </button>
                         {% else %}
@@ -677,24 +1210,21 @@
         </div>
 
         <!-- Paginación -->
-        {% if total_pages > 1 %}
+        {% if total_pages and total_pages > 1 %}
         <nav aria-label="Page navigation" class="mt-5">
             <ul class="pagination justify-content-center">
-                <!-- Botón Anterior -->
                 <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
                     <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
 
-                <!-- Números de página -->
                 {% for page_num in range(1, total_pages + 1) %}
                     <li class="page-item {% if page_num == current_page %}active{% endif %}">
                         <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
                     </li>
                 {% endfor %}
 
-                <!-- Botón Siguiente -->
                 <li class="page-item {% if not has_next %}disabled{% endif %}">
                     <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
@@ -705,53 +1235,29 @@
         {% endif %}
     </section>
 
-    <!-- Colecciones -->
-    <section class="collections" id="colecciones">
-        <h2 class="section-title">Colecciones</h2>
-        <div class="collections-grid">
-            <a href="#" class="collection-card">
-                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Colección Hombre">
-                <div class="collection-overlay">
-                    <h3 class="collection-title">Hombre</h3>
-                </div>
-            </a>
-            <a href="#" class="collection-card">
-                <img src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Colección Mujer">
-                <div class="collection-overlay">
-                    <h3 class="collection-title">Mujer</h3>
-                </div>
-            </a>
-            <a href="#" class="collection-card">
-                <img src="https://images.unsplash.com/photo-1505022610483-d10dabc6ed9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Colección Accesorios">
-                <div class="collection-overlay">
-                    <h3 class="collection-title">Accesorios</h3>
-                </div>
-            </a>
-        </div>
-    </section>
-
     <!-- Footer -->
-    <footer class="footer" id="contacto">
+    <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Fashion Boutique</h3>
-                <p>Elegancia y estilo para el día a día. Descubre nuestra exclusiva colección de moda.</p>
+                <h3>ARTURO CALLE</h3>
+                <p>Elegancia y estilo para el día a día. Descubre nuestra exclusiva colección de moda inspirada en las mejores tendencias.</p>
             </div>
             <div class="footer-section">
-                <h3>Enlaces</h3>
-                <a href="/">Inicio</a>
-                <a href="#productos">Productos</a>
-                <a href="#colecciones">Colecciones</a>
-                <a href="/dashboard">Dashboard</a>
+                <h3>CATEGORÍAS</h3>
+                <a href="#hombre">Hombre</a>
+                <a href="#mujer">Mujer</a>
+                <a href="#kids">Kids</a>
+                <a href="#zapatos">Zapatos</a>
+                <a href="#accesorios">Accesorios</a>
             </div>
             <div class="footer-section">
-                <h3>Contacto</h3>
+                <h3>CONTACTO</h3>
                 <p>+1 (555) 123-4567</p>
-                <p>info@fashionboutique.com</p>
+                <p>info@arturocalle.com</p>
                 <p>123 Fashion Street, Ciudad</p>
             </div>
             <div class="footer-section">
-                <h3>Síguenos</h3>
+                <h3>SÍGUENOS</h3>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
@@ -761,78 +1267,154 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 FASHION BOUTIQUE. TODOS LOS DERECHOS RESERVADOS.</p>
+            <p>&copy; 2025 ARTURO CALLE. TODOS LOS DERECHOS RESERVADOS.</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // Add to cart function
         document.addEventListener('DOMContentLoaded', function() {
+            // Add to cart function
             window.addToCart = function(productId) {
-                // Aquí iría la lógica real para agregar al carrito
-                fetch('/api/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        product_id: productId,
-                        quantity: 1
+                {% if current_user.is_authenticated %}
+                    fetch('{{ url_for("cart.add_to_cart") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            quantity: 1
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Mostrar notificación elegante
-                        showNotification('Producto agregado al carrito');
-                    } else {
-                        showNotification('Error: ' + data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Error al agregar al carrito', 'error');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Producto agregado al carrito');
+                            updateCartCount(data.cart_count);
+                        } else {
+                            showNotification('Error: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error al agregar al carrito', 'error');
+                    });
+                {% else %}
+                    showNotification('Por favor inicia sesión para agregar productos al carrito', 'warning');
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('auth.login') }}";
+                    }, 2000);
+                {% endif %}
             };
 
+            function updateCartCount(count) {
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    if (count > 0) {
+                        cartBadge.textContent = count;
+                        cartBadge.style.display = 'flex';
+                    } else {
+                        cartBadge.style.display = 'none';
+                    }
+                }
+            }
+
             function showNotification(message, type = 'success') {
-                // Crear elemento de notificación
                 const notification = document.createElement('div');
                 notification.style.cssText = `
                     position: fixed;
                     top: 100px;
                     right: 20px;
-                    background: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    color: white;
+                    background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : '#dc3545'};
+                    color: ${type === 'warning' ? '#000' : 'white'};
                     padding: 1rem 2rem;
                     border-radius: 0;
                     z-index: 10000;
-                    font-weight: 300;
+                    font-weight: 500;
                     letter-spacing: 1px;
                     transition: all 0.3s ease;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
                 `;
                 notification.textContent = message;
                 document.body.appendChild(notification);
 
-                // Remover después de 3 segundos
                 setTimeout(() => {
                     notification.style.opacity = '0';
                     setTimeout(() => {
-                        document.body.removeChild(notification);
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
                     }, 300);
                 }, 3000);
             }
+
+            // View options functionality
+            const viewButtons = document.querySelectorAll('.view-btn');
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const productsGrid = document.querySelector('.products-grid');
+                    if (this.querySelector('.fa-list')) {
+                        productsGrid.style.gridTemplateColumns = '1fr';
+                    } else {
+                        productsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                    }
+                });
+            });
+
+            // Menú desplegable functionality
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.nav-item')) {
+                    closeAllMenus();
+                }
+            });
+            
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            function closeAllMenus() {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                    menu.style.opacity = '0';
+                });
+            }
+            
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    closeAllMenus();
+                    const menu = this.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'block';
+                        setTimeout(() => {
+                            menu.style.opacity = '1';
+                            menu.style.transform = 'translateY(0)';
+                        }, 10);
+                    }
+                });
+                
+                item.addEventListener('mouseleave', function(e) {
+                    setTimeout(() => {
+                        if (!this.matches(':hover') && !this.querySelector('.dropdown-menu').matches(':hover')) {
+                            const menu = this.querySelector('.dropdown-menu');
+                            if (menu) {
+                                menu.style.opacity = '0';
+                                menu.style.transform = 'translateY(10px)';
+                                setTimeout(() => {
+                                    menu.style.display = 'none';
+                                }, 300);
+                            }
+                        }
+                    }, 100);
+                });
+            });
         });
     </script>
 </body>

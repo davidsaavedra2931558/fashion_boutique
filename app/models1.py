@@ -44,6 +44,23 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.nameUser}>'
 
+# Modelo para invitaciones
+class Invitation(db.Model):
+    __tablename__ = 'invitation'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False, index=True)
+    role = db.Column(db.String(50), nullable=False)
+    token = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Invitation {self.email}>'
+
+    def is_expired(self):
+        return datetime.utcnow() > self.expires_at
+
 # Modelo para items del carrito
 class CartItem(db.Model):
     __tablename__ = 'cart_item'
@@ -56,7 +73,7 @@ class CartItem(db.Model):
     # Relación con producto
     product = db.relationship('Product', backref=db.backref('cart_items', lazy=True))
 
-# NUEVAS TABLAS PARA EL DASHBOARD
+# Tablas para el dashboard
 class Product(db.Model):
     __tablename__ = 'product'
     idProduct = db.Column(db.Integer, primary_key=True)

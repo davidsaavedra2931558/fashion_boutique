@@ -1,13 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db, mail
-from app.models import User  # ← Importar User (singular)
+from app.models1 import User, Invitation
 from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 import random
 import string
 from datetime import datetime, timedelta
+import secrets
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ def send_welcome_email(user):
         msg = Message(
             subject='🎉 ¡Bienvenido/a a Fashion Boutique!',
             sender=('Fashion Boutique', 'noreply.fashionboutique@gmail.com'),
-            recipients=[user.emailUser]  # ← emailUser en lugar de email
+            recipients=[user.emailUser]
         )
 
         msg.html = f"""
@@ -74,7 +75,7 @@ def send_welcome_email(user):
                 }}
                 .cta-button {{
                     display: inline-block;
-                    background: #4A90E2;  /* Cambiado a azul claro */
+                    background: #4A90E2;
                     color: white;
                     padding: 12px 25px;
                     text-decoration: none;
@@ -84,7 +85,7 @@ def send_welcome_email(user):
                     transition: background-color 0.3s ease;
                 }}
                 .cta-button:hover {{
-                    background: #357ABD;  /* Azul más oscuro al pasar el mouse */
+                    background: #357ABD;
                 }}
                 .footer {{
                     background: #f8f9fa;
@@ -102,7 +103,7 @@ def send_welcome_email(user):
                 </div>
                 
                 <div class="content">
-                    <h2>¡Hola {user.nameUser}!</h2>  <!-- ← nameUser en lugar de username -->
+                    <h2>¡Hola {user.nameUser}!</h2>
                     
                     <div class="welcome-text">
                         <p>Nos alegra enormemente darte la bienvenida a <strong>Fashion Boutique</strong>.</p>
@@ -179,7 +180,7 @@ def send_verification_email(user, verification_code):
         msg = Message(
             subject='🔐 Código de Verificación - Fashion Boutique',
             sender=('Fashion Boutique', 'noreply.fashionboutique@gmail.com'),
-            recipients=[user.emailUser]  # ← emailUser en lugar de email
+            recipients=[user.emailUser]
         )
 
         msg.html = f"""
@@ -222,7 +223,7 @@ def send_verification_email(user, verification_code):
                 }}
                 .verification-code {{
                     display: inline-block;
-                    background: #4A90E2;  /* Cambiado a azul claro */
+                    background: #4A90E2;
                     color: white;
                     font-size: 32px;
                     font-weight: bold;
@@ -253,7 +254,7 @@ def send_verification_email(user, verification_code):
                 </div>
                 
                 <div class="content">
-                    <h2>Hola {user.nameUser},</h2>  <!-- ← nameUser en lugar de username -->
+                    <h2>Hola {user.nameUser},</h2>
                     <p>Has solicitado restablecer tu contraseña en <strong>Fashion Boutique</strong>. 
                        Usa el siguiente código de verificación para continuar:</p>
                     
@@ -302,6 +303,166 @@ def send_verification_email(user, verification_code):
         logger.error(f"❌ Error enviando email: {str(e)}")
         return False
 
+# FUNCIÓN PARA ENVIAR EMAIL DE INVITACIÓN
+def send_invitation_email(email, role, custom_message, registration_link):
+    try:
+        msg = Message(
+            subject='🎉 Invitación para unirte a Fashion Boutique',
+            sender=('Fashion Boutique', 'noreply.fashionboutique@gmail.com'),
+            recipients=[email]
+        )
+
+        msg.html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background: white;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                }}
+                .header {{
+                    background: #000000;
+                    color: white;
+                    padding: 30px;
+                    text-align: center;
+                }}
+                .header h1 {{
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: bold;
+                }}
+                .content {{
+                    padding: 30px;
+                }}
+                .welcome-text {{
+                    font-size: 18px;
+                    color: #333;
+                    line-height: 1.6;
+                }}
+                .invitation-details {{
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }}
+                .cta-button {{
+                    display: inline-block;
+                    background: #4A90E2;
+                    color: white;
+                    padding: 14px 30px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    margin: 20px 0;
+                    transition: background-color 0.3s ease;
+                }}
+                .cta-button:hover {{
+                    background: #357ABD;
+                }}
+                .footer {{
+                    background: #f8f9fa;
+                    padding: 20px;
+                    text-align: center;
+                    color: #666;
+                    font-size: 12px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>FASHION BOUTIQUE</h1>
+                    <p>Invitación Exclusiva</p>
+                </div>
+                
+                <div class="content">
+                    <h2>¡Te estamos esperando!</h2>
+                    
+                    <div class="invitation-details">
+                        <p><strong>Has sido invitado/a como:</strong> {role}</p>
+                        {f'<p><strong>Mensaje personal:</strong> "{custom_message}"</p>' if custom_message else ''}
+                    </div>
+                    
+                    <div class="welcome-text">
+                        <p>Nos complace invitarte a unirte a <strong>Fashion Boutique</strong>, tu destino de moda exclusivo.</p>
+                        <p>Como miembro de nuestra comunidad, podrás disfrutar de:</p>
+                        <ul>
+                            <li>🎁 Productos de moda exclusivos</li>
+                            <li>🚚 Envíos rápidos y seguros</li>
+                            <li>⭐ Ofertas especiales para miembros</li>
+                            <li>💝 Atención personalizada</li>
+                        </ul>
+                    </div>
+                    
+                    <center>
+                        <a href="{registration_link}" class="cta-button">
+                            Completar Mi Registro
+                        </a>
+                    </center>
+                    
+                    <p><strong>⚠️ Importante:</strong> Este enlace expirará en 7 días.</p>
+                    
+                    <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+                    
+                    <p>¡Esperamos verte pronto en Fashion Boutique! 🛍️</p>
+                </div>
+                
+                <div class="footer">
+                    <p>© 2025 Fashion Boutique. Todos los derechos reservados.</p>
+                    <p>Este es un email automático, por favor no responder.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        msg.body = f"""
+        FASHION BOUTIQUE - Invitación Exclusiva
+        
+        ¡Te estamos esperando!
+        
+        Has sido invitado/a a unirte a Fashion Boutique como: {role}
+        
+        {f'Mensaje personal: "{custom_message}"' if custom_message else ''}
+        
+        Como miembro de nuestra comunidad, podrás disfrutar de:
+        - Productos de moda exclusivos
+        - Envíos rápidos y seguros
+        - Ofertas especiales para miembros
+        - Atención personalizada
+        
+        Completa tu registro aquí: {registration_link}
+        
+        ⚠️ Importante: Este enlace expirará en 7 días.
+        
+        Si tienes alguna pregunta, no dudes en contactarnos.
+        
+        ¡Esperamos verte pronto en Fashion Boutique!
+        
+        Atentamente,
+        El equipo de Fashion Boutique
+        """
+
+        mail.send(msg)
+        logger.info(f"✅ Email de invitación enviado a {email}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Error enviando email de invitación: {str(e)}")
+        return False
+
 # GENERAR CÓDIGO DE VERIFICACIÓN
 def generate_verification_code():
     return ''.join(random.choices(string.digits, k=6))
@@ -309,29 +470,27 @@ def generate_verification_code():
 # RUTAS DE AUTENTICACIÓN
 @bp.route('/')
 def home():
-    """Página principal - Muestra home.html"""
-    return render_template('home.html')
+    """Página principal - Redirige al login"""
+    return redirect(url_for('auth.login'))
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # ✅ Redirigir según el rol
         if current_user.is_admin:
             return redirect(url_for('users.admin_dashboard'))
         else:
             return redirect(url_for('users.profile'))
     
     if request.method == 'POST':
-        nameUser = request.form.get('nameUser')  # ← nameUser en lugar de username
-        passwordUser = request.form.get('passwordUser')  # ← passwordUser en lugar de password
+        nameUser = request.form.get('nameUser')
+        passwordUser = request.form.get('passwordUser')
         
-        user = User.query.filter_by(nameUser=nameUser).first()  # ← nameUser
+        user = User.query.filter_by(nameUser=nameUser).first()
         
-        if user and user.check_password(passwordUser):  # ← passwordUser
+        if user and user.check_password(passwordUser):
             login_user(user)
             flash('¡Inicio de sesión exitoso!', 'success')
             
-            # ✅ Redirigir según el rol después del login
             if user.is_admin:
                 return redirect(url_for('users.admin_dashboard'))
             else:
@@ -344,69 +503,188 @@ def login():
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        # ✅ Redirigir según el rol
         if current_user.is_admin:
             return redirect(url_for('users.admin_dashboard'))
         else:
             return redirect(url_for('users.profile'))
     
+    # Obtener parámetros de invitación para GET requests
+    invited_email = request.args.get('invited_email') or request.args.get('email')
+    invited_role = request.args.get('invited_role') or request.args.get('role')
+    invitation_token = request.args.get('token')
+    
     if request.method == 'POST':
-        nameUser = request.form.get('nameUser')  # ← nameUser
-        emailUser = request.form.get('emailUser')  # ← emailUser
-        passwordUser = request.form.get('passwordUser')  # ← passwordUser
+        nameUser = request.form.get('nameUser')
+        emailUser = request.form.get('emailUser')
+        passwordUser = request.form.get('passwordUser')
         confirmPassword = request.form.get('confirmPassword')
+        invitation_token = request.form.get('invitation_token')
         
         if passwordUser != confirmPassword:
             flash('Las contraseñas no coinciden', 'danger')
-            return render_template('register.html')
+            return render_template('register.html',
+                                invited_email=invited_email,
+                                invited_role=invited_role,
+                                invitation_token=invitation_token)
         
-        if User.query.filter_by(emailUser=emailUser).first():  # ← emailUser
+        if User.query.filter_by(emailUser=emailUser).first():
             flash('El email ya está registrado', 'danger')
-            return render_template('register.html')
+            return render_template('register.html',
+                                invited_email=invited_email,
+                                invited_role=invited_role,
+                                invitation_token=invitation_token)
         
-        if User.query.filter_by(nameUser=nameUser).first():  # ← nameUser
+        if User.query.filter_by(nameUser=nameUser).first():
             flash('El nombre de usuario ya existe', 'danger')
-            return render_template('register.html')
+            return render_template('register.html',
+                                invited_email=invited_email,
+                                invited_role=invited_role,
+                                invitation_token=invitation_token)
         
         try:
-            # ✅ Crear nuevo usuario con los nombres de campo correctos
+            # Determinar si es admin basado en la invitación
+            is_admin = (invited_role == 'Administrador') if invited_role else False
+            
             new_user = User(
                 nameUser=nameUser,
                 emailUser=emailUser,
-                is_admin=False
+                is_admin=is_admin
             )
-            new_user.set_password(passwordUser)  # ← passwordUser
+            new_user.set_password(passwordUser)
             
             db.session.add(new_user)
+            
+            # Si viene de una invitación, marcarla como usada
+            if invitation_token:
+                invitation = Invitation.query.filter_by(token=invitation_token).first()
+                if invitation:
+                    invitation.used = True
+                    flash(f'¡Bienvenido/a {nameUser}! Tu cuenta de {invited_role} ha sido activada.', 'success')
+                else:
+                    flash(f'¡Bienvenido/a {nameUser}! Tu cuenta ha sido creada exitosamente.', 'success')
+            else:
+                flash(f'¡Bienvenido/a {nameUser}! Tu cuenta ha sido creada exitosamente.', 'success')
+            
             db.session.commit()
             
-            # ✅ ENVIAR EMAIL DE BIENVENIDA
+            # Enviar email de bienvenida
             if send_welcome_email(new_user):
                 logger.info(f"Email de bienvenida enviado a {new_user.emailUser}")
             else:
                 logger.warning(f"No se pudo enviar email de bienvenida a {new_user.emailUser}")
             
-            flash(f'¡Bienvenido/a {nameUser}! Tu cuenta ha sido creada exitosamente. Revisa tu email para más detalles.', 'success')
             return redirect(url_for('auth.login'))
             
         except Exception as e:
             db.session.rollback()
             flash(f'Error al crear la cuenta: {str(e)}', 'danger')
     
-    return render_template('register.html')
+    return render_template('register.html',
+                         invited_email=invited_email,
+                         invited_role=invited_role,
+                         invitation_token=invitation_token)
+
+@bp.route('/register/<token>')
+def register_with_token(token):
+    # Verificar si la invitación es válida
+    invitation = Invitation.query.filter_by(
+        token=token, 
+        used=False
+    ).filter(Invitation.expires_at > datetime.utcnow()).first()
+    
+    if not invitation:
+        flash('Enlace de invitación inválido o expirado', 'danger')
+        return redirect(url_for('auth.register'))
+    
+    # Pasar el email y rol al template de registro
+    return render_template(
+        'register.html',
+        invited_email=invitation.email,
+        invited_role=invitation.role,
+        invitation_token=token
+    )
+
+@bp.route('/send_invitation', methods=['POST'])
+def send_invitation():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'Datos no válidos'})
+            
+        email = data.get('email')
+        role = data.get('role', 'Cliente')
+        custom_message = data.get('message', '')
+        
+        # Validaciones
+        if not email:
+            return jsonify({'success': False, 'message': 'El email es requerido'})
+        
+        # Verificar si el email ya está registrado
+        existing_user = User.query.filter_by(emailUser=email).first()
+        if existing_user:
+            return jsonify({'success': False, 'message': 'Este email ya está registrado en el sistema'})
+        
+        # Verificar si ya hay una invitación pendiente
+        existing_invitation = Invitation.query.filter_by(
+            email=email, 
+            used=False
+        ).filter(Invitation.expires_at > datetime.utcnow()).first()
+        
+        if existing_invitation:
+            return jsonify({'success': False, 'message': 'Ya hay una invitación pendiente para este email'})
+        
+        # Generar token único
+        token = secrets.token_urlsafe(32)
+        expiration = datetime.utcnow() + timedelta(days=7)
+        
+        # Guardar invitación en la base de datos
+        invitation = Invitation(
+            email=email,
+            role=role,
+            token=token,
+            expires_at=expiration
+        )
+        
+        db.session.add(invitation)
+        db.session.commit()
+        
+        # Crear enlace de registro
+        registration_link = url_for('auth.register_with_token', token=token, _external=True)
+        
+        # Enviar correo
+        if send_invitation_email(email, role, custom_message, registration_link):
+            return jsonify({
+                'success': True, 
+                'message': f'✅ Invitación enviada exitosamente a {email}'
+            })
+        else:
+            # Si falla el email, eliminar la invitación
+            db.session.delete(invitation)
+            db.session.commit()
+            return jsonify({
+                'success': False, 
+                'message': '❌ Error al enviar el correo de invitación'
+            })
+        
+    except Exception as e:
+        logger.error(f"❌ Error en send_invitation: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'❌ Error del servidor: {str(e)}'
+        })
 
 @bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Has cerrado sesión correctamente', 'info')
-    return redirect(url_for('auth.home'))
+    return redirect(url_for('auth.login'))
 
 @bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
     if request.method == 'POST':
         email = request.form.get('email')
-        user = User.query.filter_by(emailUser=email).first()  # ← emailUser
+        user = User.query.filter_by(emailUser=email).first()
         
         if user:
             try:
@@ -437,7 +715,7 @@ def verify_reset_code():
     if not email:
         return redirect(url_for('auth.reset_request'))
     
-    user = User.query.filter_by(emailUser=email).first()  # ← emailUser
+    user = User.query.filter_by(emailUser=email).first()
     if not user:
         flash('Solicitud inválida', 'danger')
         return redirect(url_for('auth.reset_request'))
@@ -460,7 +738,7 @@ def reset_token():
     if not email:
         return redirect(url_for('auth.reset_request'))
     
-    user = User.query.filter_by(emailUser=email).first()  # ← emailUser
+    user = User.query.filter_by(emailUser=email).first()
     if not user:
         flash('Solicitud inválida', 'danger')
         return redirect(url_for('auth.reset_request'))
@@ -472,7 +750,6 @@ def reset_token():
         if new_password != confirm_password:
             flash('Las contraseñas no coinciden', 'danger')
         else:
-            # ✅ Usar el método set_password()
             user.set_password(new_password)
             user.verification_code = None
             user.verification_code_expiration = None
@@ -490,5 +767,3 @@ def reset_token():
 @bp.route('/test')
 def test():
     return "✅ ¡La aplicación funciona correctamente!"
-
-    

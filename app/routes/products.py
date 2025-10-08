@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app import db
-from app.models import Product
+from app.models1 import Product
 from decimal import Decimal
 
 products_bp = Blueprint('products', __name__)
@@ -26,12 +26,74 @@ def get_products():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ✅ NUEVO ENDPOINT: Página HTML de detalles del producto
-@products_bp.route('/product/<int:product_id>')
+# ✅ NUEVA RUTA: Página HTML de productos por categoría
+@products_bp.route('/categoria/<category_name>')
+def category_products_page(category_name):
+    """Página HTML de productos por categoría"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = 30
+        
+        # Filtrar productos por categoría (case insensitive)
+        products_query = Product.query.filter(
+            Product.category.ilike(f'%{category_name}%'),
+            Product.status == 'Activo'
+        )
+        
+        pagination = products_query.paginate(
+            page=page, 
+            per_page=per_page,
+            error_out=False
+        )
+        
+        products = pagination.items
+        
+        # Convertir productos a formato para la template
+        products_data = []
+        for product in products:
+            products_data.append({
+                'id': product.idProduct,
+                'name': product.nameProduct,
+                'description': product.description or '',
+                'price': float(product.price),
+                'image_url': product.image or f'https://via.placeholder.com/300x400/f8f9fa/000?text={product.nameProduct}',
+                'category': product.category,
+                'stock': product.stock,
+                'status': product.status
+            })
+        
+        return render_template('category_products.html', 
+                             products=products_data,
+                             category_name=category_name,
+                             current_page=page,
+                             total_pages=pagination.pages,
+                             has_next=pagination.has_next,
+                             has_prev=pagination.has_prev)
+                             
+    except Exception as e:
+        return render_template('error404.html'), 404
+
+# ✅ RUTA: Página HTML de detalles del producto
+@products_bp.route('/producto/<int:product_id>')
 def product_detail(product_id):
     """Página de detalles del producto (HTML)"""
     try:
         product = Product.query.get_or_404(product_id)
+        
+        # Convertir producto a formato para la template
+        product_data = {
+            'id': product.idProduct,
+            'name': product.nameProduct,
+            'description': product.description or '',
+            'price': float(product.price),
+            'image_url': product.image or f'https://via.placeholder.com/500x600/f8f9fa/000?text={product.nameProduct}',
+            'category': product.category,
+            'stock': product.stock,
+            'status': product.status,
+            'details': getattr(product, 'details', ''),
+            'size': getattr(product, 'size', 'No especificado'),
+            'color': getattr(product, 'color', 'No especificado')
+        }
         
         # Productos relacionados (misma categoría)
         related_products = Product.query.filter(
@@ -40,9 +102,20 @@ def product_detail(product_id):
             Product.status == 'Activo'
         ).limit(4).all()
         
+        # Convertir productos relacionados
+        related_products_data = []
+        for related_product in related_products:
+            related_products_data.append({
+                'id': related_product.idProduct,
+                'name': related_product.nameProduct,
+                'price': float(related_product.price),
+                'image_url': related_product.image or f'https://via.placeholder.com/250x300/f8f9fa/000?text={related_product.nameProduct}',
+                'category': related_product.category
+            })
+        
         return render_template('product_detail.html', 
-                             product=product, 
-                             related_products=related_products)
+                             product=product_data, 
+                             related_products=related_products_data)
     except Exception as e:
         return render_template('error404.html'), 404
 
@@ -64,6 +137,29 @@ def get_product_detail(product_id):
             'size': getattr(product, 'size', 'No especificado'),
             'color': getattr(product, 'color', 'No especificado')
         })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@products_bp.route('/api/products/category/<category_name>', methods=['GET'])
+def get_products_by_category(category_name):
+    """Obtener productos por categoría (API JSON)"""
+    try:
+        products = Product.query.filter_by(
+            category=category_name, 
+            status='Activo'
+        ).all()
+        
+        return jsonify([{
+            'id': product.idProduct,
+            'name': product.nameProduct,
+            'description': product.description or '',
+            'price': float(product.price),
+            'image_url': product.image or f'https://via.placeholder.com/250x300/f8f9fa/000?text={product.nameProduct}',
+            'category': product.category,
+            'stock': product.stock,
+            'status': product.status
+        } for product in products])
+        
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -231,25 +327,60 @@ def delete_product(product_id):
             'message': f'Error al eliminar el producto: {str(e)}'
         }), 500
 
-@products_bp.route('/api/products/category/<category_name>', methods=['GET'])
-def get_products_by_category(category_name):
-    """Obtener productos por categoría"""
+# ✅ NUEVA RUTA: Búsqueda de productos
+@products_bp.route('/buscar')
+def search_products():
+    """Búsqueda de productos"""
     try:
-        products = Product.query.filter_by(
-            category=category_name, 
-            status='Activo'
-        ).all()
+        query = request.args.get('q', '')
+        page = request.args.get('page', 1, type=int)
+        per_page = 30
         
-        return jsonify([{
-            'id': product.idProduct,
-            'name': product.nameProduct,
-            'description': product.description or '',
-            'price': float(product.price),
-            'image_url': product.image or f'https://via.placeholder.com/250x300/f8f9fa/000?text={product.nameProduct}',
-            'category': product.category,
-            'stock': product.stock,
-            'status': product.status
-        } for product in products])
+        if not query:
+            return render_template('search_results.html', 
+                                 products=[], 
+                                 query=query,
+                                 message='Ingresa un término de búsqueda')
         
+        # Buscar productos que coincidan con el nombre o categoría
+        products_query = Product.query.filter(
+            db.or_(
+                Product.nameProduct.ilike(f'%{query}%'),
+                Product.category.ilike(f'%{query}%'),
+                Product.description.ilike(f'%{query}%')
+            ),
+            Product.status == 'Activo'
+        )
+        
+        pagination = products_query.paginate(
+            page=page, 
+            per_page=per_page,
+            error_out=False
+        )
+        
+        products = pagination.items
+        
+        # Convertir productos a formato para la template
+        products_data = []
+        for product in products:
+            products_data.append({
+                'id': product.idProduct,
+                'name': product.nameProduct,
+                'description': product.description or '',
+                'price': float(product.price),
+                'image_url': product.image or f'https://via.placeholder.com/300x400/f8f9fa/000?text={product.nameProduct}',
+                'category': product.category,
+                'stock': product.stock,
+                'status': product.status
+            })
+        
+        return render_template('search_results.html', 
+                             products=products_data,
+                             query=query,
+                             current_page=page,
+                             total_pages=pagination.pages,
+                             has_next=pagination.has_next,
+                             has_prev=pagination.has_prev)
+                             
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return render_template('error404.html'), 404

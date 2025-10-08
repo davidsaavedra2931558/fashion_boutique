@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template, flash
 from flask_login import login_required, current_user
 from app import db
-from app.models import CartItem, Product
+from app.models1 import CartItem, Product
 from datetime import datetime
 
 cart_bp = Blueprint('cart', __name__)

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FASHION BOUTIQUE</h1>
+        <p>Invitación Exclusiva</p>
+    </div>
+    
+    <div class="content">
+        <h2>¡Hola!</h2>
+        
+        <p>Has sido invitado/a a unirte a <strong>FASHION BOUTIQUE</strong> como <strong>{{ role }}</strong>.</p>
+        
+        {% if custom_message %}
+        <p><em>"{{ custom_message }}"</em></p>
+        {% endif %}
+        
+        <p>Para completar tu registro, haz clic en el siguiente enlace:</p>
+        
+        <div style="text-align: center;">
+            <a href="{{ registration_link }}" class="button">
+                Completar Mi Registro
+            </a>
+        </div>
+        
+        <p><strong>Este enlace expirará en 7 días.</strong></p>
+        
+        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+        
+        <p>¡Te esperamos!</p>
+        <p><strong>El equipo de FASHION BOUTIQUE</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+        <p>&copy; 2025 FASHION BOUTIQUE. Todos los derechos reservados.</p>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enviar invitación
+    document.getElementById('sendInvite').addEventListener('click', function() {
+        const email = document.getElementById('inviteEmail').value;
+        const role = document.getElementById('inviteRole').value;
+        const message = document.getElementById('inviteMessage').value;
+        
+        if (!email) {
+            alert('Por favor, ingresa un correo electrónico');
+            return;
+        }
+        
+        // Validar formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Por favor, ingresa un correo electrónico válido');
+            return;
+        }
+        
+        // Mostrar loading
+        const btn = this;
+        const originalText = btn.querySelector('#sendInviteText');
+        const spinner = btn.querySelector('#sendInviteSpinner');
+        
+        originalText.classList.add('d-none');
+        spinner.classList.remove('d-none');
+        btn.disabled = true;
+        
+        // Enviar datos al servidor Flask
+        fetch('/send_invitation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                role: role,
+                message: message
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('inviteModal'));
+                modal.hide();
+                
+                // Mostrar mensaje de éxito
+                showNotification(data.message, 'success');
+                
+                // Limpiar formulario
+                document.getElementById('inviteForm').reset();
+            } else {
+                showNotification('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error de conexión: ' + error.message, 'error');
+        })
+        .finally(() => {
+            // Ocultar loading
+            originalText.classList.remove('d-none');
+            spinner.classList.add('d-none');
+            btn.disabled = false;
+        });
+    });
+    
+    // Función para mostrar notificaciones bonitas
+    function showNotification(message, type) {
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        
+        notification.innerHTML = `
+            <strong>${type === 'success' ? '✅ Éxito:' : '❌ Error:'}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
+    
+    // Cerrar modal cuando se envía exitosamente
+    document.getElementById('inviteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+    });
+});
+</script>
+</body>
+</html>

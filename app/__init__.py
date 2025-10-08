@@ -45,7 +45,7 @@ def create_app():
     login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
     
     # Importar y configurar user_loader DENTRO de create_app
-    from app.models import User
+    from app.models1 import User
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -76,7 +76,7 @@ def create_app():
     @app.route('/')
     def index():
         # ✅ IMPORTAR Product DENTRO de la función para evitar circular import
-        from app.models import Product
+        from app.models1 import Product
         
         page = request.args.get('page', 1, type=int)
         per_page = 30  # ✅ 30 productos por página (no 6)
