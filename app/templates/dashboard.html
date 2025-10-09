@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #2c3e50;
+            --primary-color: #000000ff;
             --secondary-color: #ffffffff;
             --accent-color: #ffffffff;
             --light-bg: #f8f9fa;
             --dark-text: #480792ff;
-            --light-text: #47c1dfff;
+            --light-text: #f4fdffff;
             --sidebar-width: 250px;
             --border-color: #a7a7a7ff;
         }
@@ -348,19 +348,20 @@
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-brand">FASHION BOUTIQUE</div>
-        <ul class="sidebar-menu">
-            <li><a href="#" class="nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-            <li><a href="#" class="nav-link" data-section="productos"><i class="bi bi-bag"></i> <span>Productos</span></a></li>
-            <li><a href="#" class="nav-link" data-section="categorias"><i class="bi bi-tags"></i> <span>Categorías</span></a></li>
-            <li><a href="#" class="nav-link" data-section="pedidos"><i class="bi bi-cart-check"></i> <span>Pedidos</span></a></li>
-            <li><a href="#" class="nav-link" data-section="usuarios"><i class="bi bi-people"></i> <span>Usuarios</span></a></li>
-            <li><a href="#" class="nav-link" data-section="reportes"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a></li>
-            <li><a href="#" class="nav-link" data-section="configuracion"><i class="bi bi-gear"></i> <span>Configuración</span></a></li>
-            <li><a href="#" id="logout-sidebar"><i class="bi bi-box-arrow-right"></i> <span>Cerrar Sesión</span></a></li>
-        </ul>
-    </div>
+   <div class="sidebar">
+    <div class="sidebar-brand">FASHION BOUTIQUE</div>
+    <ul class="sidebar-menu">
+        <li><a href="#" class="nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+         <li><a href="#" class="nav-link" data-section="pos"><i class="bi bi-cash-coin"></i> <span>Punto de Venta</span></a></li>
+        <li><a href="#" class="nav-link" data-section="productos"><i class="bi bi-bag"></i> <span>Productos</span></a></li>
+        <li><a href="#" class="nav-link" data-section="categorias"><i class="bi bi-tags"></i> <span>Categorías</span></a></li>
+        <li><a href="#" class="nav-link" data-section="pedidos"><i class="bi bi-cart-check"></i> <span>Pedidos Online</span></a></li>
+        <li><a href="#" class="nav-link" data-section="usuarios"><i class="bi bi-people"></i> <span>Usuarios</span></a></li>
+        <li><a href="#" class="nav-link" data-section="reportes"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a></li>
+        <li><a href="#" class="nav-link" data-section="configuracion"><i class="bi bi-gear"></i> <span>Configuración</span></a></li>
+        <li><a href="#" id="logout-sidebar"><i class="bi bi-box-arrow-right"></i> <span>Cerrar Sesión</span></a></li>
+    </ul>
+</div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -369,13 +370,15 @@
             <h1 id="section-title">Panel de Administración</h1>
             <div class="user-dropdown">
                 <div class="user-dropdown-toggle">
-                    <span class="me-2">Hola, Admin</span>
+                 <span class="me-2">Hola, {{ current_user.nameUser }}</span>
                     <img src="https://ui-avatars.com/api/?name=Admin&background=2c3e50&color=fff" class="rounded-circle" width="40" height="40" alt="Avatar">
                 </div>
                 <div class="user-dropdown-menu" id="userDropdown">
-                    <a href="#" class="user-dropdown-item"><i class="bi bi-person me-2"></i> Mi Perfil</a>
-                    <a href="#" class="user-dropdown-item"><i class="bi bi-gear me-2"></i> Configuración</a>
-                    <div class="dropdown-divider"></div>
+                                   <a href="{{ url_for('users.profile') }}" class="user-dropdown-item">
+                    <i class="bi bi-person me-2"></i> Mi Perfil
+                    <a href="{{ url_for('users.edit_profile') }}" class="user-dropdown-item">
+                    <i class="bi bi-gear me-2"></i> Configuración
+                    
                     <a href="#" class="user-dropdown-item" id="logout-header"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
                 </div>
             </div>
@@ -385,7 +388,7 @@
         <div id="dashboard" class="content-section active">
             <!-- Welcome Card -->
             <div class="welcome-card">
-                <h1><i class="bi bi-person-circle"></i> ¡Hola, Admin!</h1>
+              <span class="me-2">Hola, {{ current_user.nameUser }}</span>
                 <p class="lead">Bienvenido/a al panel de administración de tu tienda. Aquí puedes gestionar productos, categorías, pedidos y más.</p>
             </div>
 
@@ -463,6 +466,673 @@
             </div>
         </div>
 
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Punto de Venta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .content-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .product-image {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .invoice-preview {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .invoice-header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .total-section {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn-action {
+            margin: 5px;
+        }
+        .form-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <!-- Punto de Venta Section -->
+        <div id="pos" class="content-section">
+            <div class="table-container">
+                <h2 class="mb-4">Facturacion Tienda Fisica</h2>
+                
+                <!-- Formulario de búsqueda de productos -->
+                <div class="form-section">
+                    <h4>Buscar Producto</h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="searchProduct" placeholder="Código de barras, nombre o SKU del producto">
+                                <button class="btn btn-outline-secondary" type="button" id="searchBtn">Buscar</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal">Agregar Producto Manualmente</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de productos en la venta -->
+                <div class="form-section">
+                    <h4>Productos en la Venta</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="saleItems">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Cantidad</th>
+                                    <th>Descuento</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los productos se agregarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Resumen de la venta -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-section">
+                            <h4>Información del Cliente</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="customerName" class="form-label">Nombre del Cliente</label>
+                                        <input type="text" class="form-control" id="customerName" placeholder="Nombre completo">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="customerId" class="form-label">DNI/NIF/CIF</label>
+                                        <input type="text" class="form-control" id="customerId" placeholder="Número de identificación">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="customerEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="customerEmail" placeholder="correo@ejemplo.com">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="customerPhone" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="customerPhone" placeholder="Número de teléfono">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customerAddress" class="form-label">Dirección</label>
+                                <textarea class="form-control" id="customerAddress" rows="2" placeholder="Dirección completa"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="total-section">
+                            <h4>Resumen de Venta</h4>
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Descuento:</span>
+                                <span id="totalDiscount">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Impuestos (21%):</span>
+                                <span id="taxes">$0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fs-5">
+                                <strong>Total:</strong>
+                                <strong id="totalAmount">$0.00</strong>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">Método de Pago</label>
+                                    <select class="form-select" id="paymentMethod">
+                                        <option value="cash">Efectivo</option>
+                                        <option value="card">Tarjeta</option>
+                                        <option value="transfer">Transferencia</option>
+                                        <option value="digital">Pago Digital</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3" id="cashSection">
+                                    <label for="cashAmount" class="form-label">Monto Recibido</label>
+                                    <input type="number" class="form-control" id="cashAmount" step="0.01" min="0">
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span>Cambio:</span>
+                                        <span id="changeAmount">$0.00</span>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-success w-100 mt-3" id="completeSale">Completar Venta</button>
+                                <button class="btn btn-outline-secondary w-100 mt-2" id="cancelSale">Cancelar Venta</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vista previa de factura -->
+                <div class="invoice-preview" id="invoicePreview" style="display: none;">
+                    <h4>Vista Previa de Factura</h4>
+                    <div class="invoice-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h3>FACTURA</h3>
+                                <p><strong>Nº:</strong> <span id="invoiceNumber">F-2023-001</span></p>
+                                <p><strong>Fecha:</strong> <span id="invoiceDate">01/01/2023</span></p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h4>TIENDA EJEMPLO</h4>
+                                <p>Calle Principal, 123</p>
+                                <p>28001 Madrid, España</p>
+                                <p>Tel: +34 91 123 45 67</p>
+                                <p>info@tiendaejemplo.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Cliente:</h5>
+                            <p id="invoiceCustomerName">-</p>
+                            <p id="invoiceCustomerId">-</p>
+                            <p id="invoiceCustomerAddress">-</p>
+                            <p id="invoiceCustomerContact">-</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h5>Información de Pago:</h5>
+                            <p id="invoicePaymentMethod">-</p>
+                            <p id="invoicePaymentDetails">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Cantidad</th>
+                                    <th>Descuento</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceItems">
+                                <!-- Los productos de la factura se agregarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span id="invoiceSubtotal">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Descuento:</span>
+                                <span id="invoiceDiscount">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Impuestos (21%):</span>
+                                <span id="invoiceTaxes">$0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fs-5">
+                                <strong>Total:</strong>
+                                <strong id="invoiceTotal">$0.00</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <button class="btn btn-primary" id="printInvoice">Imprimir Factura</button>
+                        <button class="btn btn-success" id="sendInvoice">Enviar por Email</button>
+                        <button class="btn btn-outline-secondary" id="closePreview">Cerrar Vista Previa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar producto manualmente -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Agregar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="productName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Precio Unitario</label>
+                        <input type="number" class="form-control" id="productPrice" step="0.01" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="productQuantity" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="productQuantity" min="1" value="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="productDiscount" class="form-label">Descuento (%)</label>
+                        <input type="number" class="form-control" id="productDiscount" min="0" max="100" value="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="addProductBtn">Agregar Producto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let saleItems = [];
+        let invoiceCounter = 1;
+
+        // Elementos del DOM
+        const saleItemsTable = document.getElementById('saleItems').getElementsByTagName('tbody')[0];
+        const subtotalElement = document.getElementById('subtotal');
+        const totalDiscountElement = document.getElementById('totalDiscount');
+        const taxesElement = document.getElementById('taxes');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const cashAmountInput = document.getElementById('cashAmount');
+        const changeAmountElement = document.getElementById('changeAmount');
+        const invoicePreview = document.getElementById('invoicePreview');
+        const cashSection = document.getElementById('cashSection');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar/ocultar sección de efectivo según método de pago
+            paymentMethodSelect.addEventListener('change', function() {
+                cashSection.style.display = this.value === 'cash' ? 'block' : 'none';
+            });
+            
+            // Calcular cambio cuando se ingresa monto en efectivo
+            cashAmountInput.addEventListener('input', calculateChange);
+            
+            // Botón para agregar producto manualmente
+            document.getElementById('addProductBtn').addEventListener('click', addManualProduct);
+            
+            // Botón para completar venta
+            document.getElementById('completeSale').addEventListener('click', completeSale);
+            
+            // Botón para cancelar venta
+            document.getElementById('cancelSale').addEventListener('click', cancelSale);
+            
+            // Botones de la vista previa de factura
+            document.getElementById('printInvoice').addEventListener('click', printInvoice);
+            document.getElementById('sendInvoice').addEventListener('click', sendInvoice);
+            document.getElementById('closePreview').addEventListener('click', closeInvoicePreview);
+            
+            // Inicializar con método de pago en efectivo
+            cashSection.style.display = 'block';
+        });
+
+        // Función para agregar producto manualmente
+        function addManualProduct() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const discount = parseFloat(document.getElementById('productDiscount').value);
+            
+            if (!name || isNaN(price) || isNaN(quantity)) {
+                alert('Por favor, complete todos los campos obligatorios');
+                return;
+            }
+            
+            addProductToSale({
+                id: Date.now(), // ID temporal
+                name: name,
+                price: price,
+                quantity: quantity,
+                discount: discount
+            });
+            
+            // Cerrar modal y limpiar campos
+            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').value = '1';
+            document.getElementById('productDiscount').value = '0';
+        }
+
+        // Función para agregar producto a la venta
+        function addProductToSale(product) {
+            // Verificar si el producto ya está en la venta
+            const existingItemIndex = saleItems.findIndex(item => item.id === product.id);
+            
+            if (existingItemIndex !== -1) {
+                // Si ya existe, aumentar la cantidad
+                saleItems[existingItemIndex].quantity += product.quantity;
+            } else {
+                // Si no existe, agregarlo
+                saleItems.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: product.quantity,
+                    discount: product.discount || 0
+                });
+            }
+            
+            updateSaleTable();
+            updateTotals();
+        }
+
+        // Función para actualizar la tabla de productos en venta
+        function updateSaleTable() {
+            saleItemsTable.innerHTML = '';
+            
+            saleItems.forEach((item, index) => {
+                const discountAmount = (item.price * item.quantity * item.discount) / 100;
+                const subtotal = (item.price * item.quantity) - discountAmount;
+                
+                const row = saleItemsTable.insertRow();
+                row.innerHTML = `
+                    <td><img src="https://via.placeholder.com/80" alt="${item.name}" class="product-image"></td>
+                    <td>${item.name}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(${index}, -1)">-</button>
+                            <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateQuantityInput(${index}, this.value)">
+                            <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(${index}, 1)">+</button>
+                        </div>
+                    </td>
+                    <td>${item.discount}%</td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeProduct(${index})">Eliminar</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Función para actualizar cantidad mediante botones
+        function updateQuantity(index, change) {
+            saleItems[index].quantity += change;
+            
+            if (saleItems[index].quantity < 1) {
+                saleItems[index].quantity = 1;
+            }
+            
+            updateSaleTable();
+            updateTotals();
+        }
+
+        // Función para actualizar cantidad mediante input
+        function updateQuantityInput(index, value) {
+            const quantity = parseInt(value);
+            
+            if (isNaN(quantity) || quantity < 1) {
+                saleItems[index].quantity = 1;
+            } else {
+                saleItems[index].quantity = quantity;
+            }
+            
+            updateSaleTable();
+            updateTotals();
+        }
+
+        // Función para eliminar producto
+        function removeProduct(index) {
+            saleItems.splice(index, 1);
+            updateSaleTable();
+            updateTotals();
+        }
+
+        // Función para actualizar totales
+        function updateTotals() {
+            let subtotal = 0;
+            let totalDiscount = 0;
+            
+            saleItems.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                const itemDiscount = (itemSubtotal * item.discount) / 100;
+                subtotal += itemSubtotal;
+                totalDiscount += itemDiscount;
+            });
+            
+            const netSubtotal = subtotal - totalDiscount;
+            const taxes = netSubtotal * 0.21; // 21% de IVA
+            const total = netSubtotal + taxes;
+            
+            subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+            totalDiscountElement.textContent = `$${totalDiscount.toFixed(2)}`;
+            taxesElement.textContent = `$${taxes.toFixed(2)}`;
+            totalAmountElement.textContent = `$${total.toFixed(2)}`;
+            
+            // Recalcular cambio si hay monto en efectivo
+            calculateChange();
+        }
+
+        // Función para calcular cambio
+        function calculateChange() {
+            const total = parseFloat(totalAmountElement.textContent.replace('$', ''));
+            const cashAmount = parseFloat(cashAmountInput.value) || 0;
+            const change = cashAmount - total;
+            
+            changeAmountElement.textContent = `$${change >= 0 ? change.toFixed(2) : '0.00'}`;
+            changeAmountElement.style.color = change >= 0 ? 'green' : 'red';
+        }
+
+        // Función para completar la venta
+        function completeSale() {
+            if (saleItems.length === 0) {
+                alert('No hay productos en la venta');
+                return;
+            }
+            
+            const customerName = document.getElementById('customerName').value;
+            if (!customerName) {
+                alert('Por favor, ingrese el nombre del cliente');
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            if (paymentMethod === 'cash') {
+                const cashAmount = parseFloat(cashAmountInput.value) || 0;
+                const total = parseFloat(totalAmountElement.textContent.replace('$', ''));
+                
+                if (cashAmount < total) {
+                    alert('El monto en efectivo es menor al total de la venta');
+                    return;
+                }
+            }
+            
+            // Generar factura
+            generateInvoice();
+            
+            // Mostrar vista previa
+            invoicePreview.style.display = 'block';
+            
+            // Desplazarse a la factura
+            invoicePreview.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Función para generar factura
+        function generateInvoice() {
+            // Actualizar número y fecha de factura
+            const now = new Date();
+            document.getElementById('invoiceNumber').textContent = `F-${now.getFullYear()}-${invoiceCounter.toString().padStart(3, '0')}`;
+            document.getElementById('invoiceDate').textContent = now.toLocaleDateString('es-ES');
+            
+            // Actualizar información del cliente
+            document.getElementById('invoiceCustomerName').textContent = document.getElementById('customerName').value;
+            document.getElementById('invoiceCustomerId').textContent = document.getElementById('customerId').value || '-';
+            document.getElementById('invoiceCustomerAddress').textContent = document.getElementById('customerAddress').value || '-';
+            
+            const email = document.getElementById('customerEmail').value;
+            const phone = document.getElementById('customerPhone').value;
+            document.getElementById('invoiceCustomerContact').textContent = 
+                `${email ? email + ' | ' : ''}${phone || ''}`;
+            
+            // Actualizar información de pago
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentText = {
+                'cash': 'Efectivo',
+                'card': 'Tarjeta',
+                'transfer': 'Transferencia',
+                'digital': 'Pago Digital'
+            }[paymentMethod];
+            
+            document.getElementById('invoicePaymentMethod').textContent = `Método: ${paymentText}`;
+            
+            if (paymentMethod === 'cash') {
+                const cashAmount = parseFloat(cashAmountInput.value) || 0;
+                const change = parseFloat(changeAmountElement.textContent.replace('$', ''));
+                document.getElementById('invoicePaymentDetails').textContent = 
+                    `Recibido: $${cashAmount.toFixed(2)} | Cambio: $${change.toFixed(2)}`;
+            } else {
+                document.getElementById('invoicePaymentDetails').textContent = '';
+            }
+            
+            // Actualizar productos en la factura
+            const invoiceItemsTable = document.getElementById('invoiceItems');
+            invoiceItemsTable.innerHTML = '';
+            
+            let subtotal = 0;
+            let totalDiscount = 0;
+            
+            saleItems.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                const itemDiscount = (itemSubtotal * item.discount) / 100;
+                const itemTotal = itemSubtotal - itemDiscount;
+                
+                subtotal += itemSubtotal;
+                totalDiscount += itemDiscount;
+                
+                const row = invoiceItemsTable.insertRow();
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.discount}% ($${itemDiscount.toFixed(2)})</td>
+                    <td>$${itemTotal.toFixed(2)}</td>
+                `;
+            });
+            
+            const netSubtotal = subtotal - totalDiscount;
+            const taxes = netSubtotal * 0.21;
+            const total = netSubtotal + taxes;
+            
+            document.getElementById('invoiceSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('invoiceDiscount').textContent = `$${totalDiscount.toFixed(2)}`;
+            document.getElementById('invoiceTaxes').textContent = `$${taxes.toFixed(2)}`;
+            document.getElementById('invoiceTotal').textContent = `$${total.toFixed(2)}`;
+            
+            // Incrementar contador de facturas
+            invoiceCounter++;
+        }
+
+        // Función para cancelar venta
+        function cancelSale() {
+            if (confirm('¿Está seguro de que desea cancelar la venta? Se perderán todos los datos.')) {
+                saleItems = [];
+                updateSaleTable();
+                updateTotals();
+                
+                // Limpiar formulario
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerId').value = '';
+                document.getElementById('customerEmail').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('customerAddress').value = '';
+                document.getElementById('cashAmount').value = '';
+                document.getElementById('paymentMethod').value = 'cash';
+                cashSection.style.display = 'block';
+                
+                // Ocultar vista previa si está visible
+                invoicePreview.style.display = 'none';
+            }
+        }
+
+        // Función para imprimir factura
+        function printInvoice() {
+            window.print();
+        }
+
+        // Función para enviar factura por email
+        function sendInvoice() {
+            const customerEmail = document.getElementById('customerEmail').value;
+            
+            if (!customerEmail) {
+                alert('No se ha proporcionado un email para enviar la factura');
+                return;
+            }
+            
+            alert(`Factura enviada a ${customerEmail}`);
+            // En una implementación real, aquí se conectaría con un servicio de email
+        }
+
+        // Función para cerrar vista previa
+        function closeInvoicePreview() {
+            invoicePreview.style.display = 'none';
+            
+            // Reiniciar la venta después de completarla
+            setTimeout(() => {
+                cancelSale();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
+
         <!-- Productos Section -->
         <div id="productos" class="content-section">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -500,6 +1170,8 @@
             </div>
         </div>
 
+
+        
         <!-- Modal para agregar/editar producto -->
         <div class="modal fade" id="productoModal" tabindex="-1" aria-labelledby="productoModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -572,6 +1244,70 @@
             </div>
         </div>
 
+<!-- Modal para agregar/editar usuario -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Agregar Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Nombre Completo *</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Contraseña <span id="passwordHelp" class="text-muted">(dejar en blanco para no cambiar)</span></label>
+                        <input type="password" class="form-control" id="userPassword">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="userRole" class="form-label">Rol *</label>
+                                <select class="form-select" id="userRole" required>
+                                    <option value="">Seleccionar rol</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Usuario">Usuario</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="userStatus" class="form-label">Estado *</label>
+                                <select class="form-select" id="userStatus" required>
+                                    <option value="">Seleccionar estado</option>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                   
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <small>Los campos marcados con * son obligatorios.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveUser">
+                    <span id="saveUserText">Guardar Usuario</span>
+                    <span id="saveUserSpinner" class="d-none">
+                        <span class="db-spinner spinner-border-sm"></span> Guardando...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>  
 
 
         <!-- Categorías Section -->
@@ -653,7 +1389,8 @@
                 </div>
             </div>
             
-                <!-- Modal para invitar usuario -->
+           
+     <!-- Modal para invitar usuario -->
     <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -684,11 +1421,6 @@
                             </select>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="inviteMessage" class="form-label">Mensaje Personalizado (Opcional)</label>
-                            <textarea class="form-control" id="inviteMessage" rows="3" placeholder="Agrega un mensaje personal para la invitación..."></textarea>
-                        </div>
-                        
                         <div class="alert alert-info">
                             <small>
                                 <i class="bi bi-lightbulb"></i> 
@@ -711,41 +1443,43 @@
         </div>
     </div>
 
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Avatar</th>
-                                <th>Nombre de Usuario</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Fecha Registro</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr>
-                                <td colspan="8" class="text-center">
-                                    <span class="db-spinner text-primary"></span>
-                                    <p class="mt-2">Cargando usuarios...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Avatar</th>
+                        <th>Nombre de Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Fecha Registro</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            <span class="db-spinner text-primary"></span>
+                            <p class="mt-2">Cargando usuarios...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+    </div>
+</div>
 
-       <script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Enviar invitación
+    // Enviar invitación - CÓDIGO CORREGIDO
     document.getElementById('sendInvite').addEventListener('click', function() {
         const email = document.getElementById('inviteEmail').value;
         const role = document.getElementById('inviteRole').value;
-        const message = document.getElementById('inviteMessage').value;
+        // ELIMINADO: const message = document.getElementById('inviteMessage').value; // ← ESTA LÍNEA CAUSABA EL ERROR
+        
+        console.log('Enviando invitación a:', email, 'con rol:', role);
         
         if (!email) {
             alert('Por favor, ingresa un correo electrónico');
@@ -768,7 +1502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.classList.remove('d-none');
         btn.disabled = true;
         
-        // Enviar datos al servidor Flask
+        // Enviar datos al servidor Flask - SIN EL CAMPO MESSAGE QUE NO EXISTE
         fetch('/send_invitation', {
             method: 'POST',
             headers: {
@@ -776,47 +1510,87 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 email: email,
-                role: role,
-                message: message
+                role: role
+                // ELIMINADO: message: message ← ESTE CAMPO NO EXISTE EN TU FORMULARIO
             })
         })
         .then(response => {
+            console.log('Respuesta del servidor:', response.status);
             if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
+                throw new Error(`Error HTTP: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
+            console.log('Datos recibidos:', data);
+            
+            // Restablecer el botón inmediatamente
+            originalText.classList.remove('d-none');
+            spinner.classList.add('d-none');
+            btn.disabled = false;
+            
             if (data.success) {
-                // Cerrar modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('inviteModal'));
-                modal.hide();
+                // Cerrar el modal de forma segura
+                closeModalSafely();
                 
                 // Mostrar mensaje de éxito
                 showNotification(data.message, 'success');
                 
-                // Limpiar formulario
-                document.getElementById('inviteForm').reset();
+                // Limpiar formulario después de cerrar el modal
+                setTimeout(() => {
+                    document.getElementById('inviteForm').reset();
+                }, 300);
+                
             } else {
                 showNotification('Error: ' + data.message, 'error');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error de conexión: ' + error.message, 'error');
-        })
-        .finally(() => {
-            // Ocultar loading
+            console.error('Error completo:', error);
+            // Restablecer el botón en caso de error
             originalText.classList.remove('d-none');
             spinner.classList.add('d-none');
             btn.disabled = false;
+            
+            showNotification('Error de conexión: ' + error.message, 'error');
         });
     });
     
+    // Función para cerrar el modal de forma segura
+    function closeModalSafely() {
+        const modalElement = document.getElementById('inviteModal');
+        if (modalElement) {
+            // Método 1: Usar Bootstrap
+            const bsModal = bootstrap.Modal.getInstance(modalElement);
+            if (bsModal) {
+                bsModal.hide();
+            } else {
+                // Método 2: Crear nueva instancia y cerrar
+                const newModal = new bootstrap.Modal(modalElement);
+                newModal.hide();
+            }
+            
+            // Método 3: Forzar cierre manualmente como respaldo
+            setTimeout(() => {
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            }, 100);
+        }
+    }
+    
     // Función para mostrar notificaciones
     function showNotification(message, type) {
+        // Eliminar notificaciones existentes primero
+        const existingNotifications = document.querySelectorAll('.custom-notification');
+        existingNotifications.forEach(notification => notification.remove());
+        
         const notification = document.createElement('div');
-        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} custom-notification alert-dismissible fade show`;
         notification.style.cssText = `
             position: fixed;
             top: 20px;
@@ -833,9 +1607,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.body.appendChild(notification);
         
+        // Auto-eliminar después de 5 segundos
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
+                notification.remove();
             }
         }, 5000);
     }
@@ -844,8 +1619,23 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('inviteForm').addEventListener('submit', function(e) {
         e.preventDefault();
     });
+    
+    // Resetear todo cuando se cierra el modal manualmente
+    document.getElementById('inviteModal').addEventListener('hidden.bs.modal', function() {
+        document.getElementById('inviteForm').reset();
+        
+        // Resetear el botón por si acaso
+        const btn = document.getElementById('sendInvite');
+        const originalText = btn.querySelector('#sendInviteText');
+        const spinner = btn.querySelector('#sendInviteSpinner');
+        
+        originalText.classList.remove('d-none');
+        spinner.classList.add('d-none');
+        btn.disabled = false;
+    });
 });
 </script>
+
         <!-- Otras secciones (pedidos, reportes, configuración) -->
         <div id="pedidos" class="content-section">
             <h2>Gestión de Pedidos</h2>
@@ -854,14 +1644,163 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <div id="reportes" class="content-section">
             <h2>Reportes y Análisis</h2>
-            <p>Contenido de la sección de reportes...</p>
+          <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="reportStartDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" id="reportEndDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo de Reporte</label>
+                        <select class="form-select" id="reportType">
+                            <option value="ventas">Ventas</option>
+                            <option value="productos">Productos</option>
+                            <option value="clientes">Clientes</option>
+                            <option value="inventario">Inventario</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateReport">
+                            <i class="bi bi-gear me-2"></i>Generar Reporte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botones de Exportación -->
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn btn-success" id="exportExcel">
+                        <i class="bi bi-file-earmark-excel me-2"></i>Exportar a Excel
+                    </button>
+                    <button class="btn btn-primary" id="exportWord">
+                        <i class="bi bi-file-earmark-word me-2"></i>Exportar a Word
+                    </button>
+                    <button class="btn btn-danger" id="exportPDF">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Exportar a PDF
+                    </button>
+                </div>
+
+                <!-- Resultados del Reporte -->
+                <div id="reportResults">
+                    <div class="text-center py-5">
+                        <i class="bi bi-graph-up display-4 text-muted"></i>
+                        <h4 class="mt-3 text-muted">Selecciona los filtros y genera un reporte</h4>
+                        <p class="text-muted">Los datos se mostrarán aquí después de generar el reporte</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
+
+ <!-- Configuración Section -->
         <div id="configuracion" class="content-section">
-            <h2>Configuración del Sistema</h2>
-            <p>Contenido de la sección de configuración...</p>
+            <div class="table-container">
+                <h2 class="mb-4">Configuración del Sistema</h2>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Configuración de la Tienda</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre de la Tienda</label>
+                                    <input type="text" class="form-control" value="Fashion Boutique">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">NIT/RUC</label>
+                                    <input type="text" class="form-control" value="900.123.456-7">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Dirección</label>
+                                    <textarea class="form-control" rows="2">Cra 45 #26-85, Medellín</textarea>
+                                </div>
+                                <button class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Configuración de Facturación</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Resolución DIAN</label>
+                                    <input type="text" class="form-control" value="18764000000001">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Prefijo Factura</label>
+                                    <input type="text" class="form-control" value="FACT">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Número Inicial</label>
+                                    <input type="number" class="form-control" value="1">
+                                </div>
+                                <button class="btn btn-primary">Actualizar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="bi bi-printer me-2"></i>Configuración de Impresión</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="printAuto" checked>
+                                    <label class="form-check-label" for="printAuto">Impresión Automática</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="printCopy" checked>
+                                    <label class="form-check-label" for="printCopy">Imprimir Copia Cliente</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tamaño de Papel</label>
+                                    <select class="form-select">
+                                        <option>Térmico 80mm</option>
+                                        <option>A4</option>
+                                        <option>Carta</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notificaciones</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notifStock" checked>
+                                    <label class="form-check-label" for="notifStock">Alertas de Stock Bajo</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notifSales" checked>
+                                    <label class="form-check-label" for="notifSales">Resumen de Ventas Diarias</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notifOrders">
+                                    <label class="form-check-label" for="notifOrders">Notificaciones de Pedidos Online</label>
+                                </div>
+                                <button class="btn btn-primary">Guardar Preferencias</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+        
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

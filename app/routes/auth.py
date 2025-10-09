@@ -536,7 +536,7 @@ def register():
         
         if User.query.filter_by(nameUser=nameUser).first():
             flash('El nombre de usuario ya existe', 'danger')
-            return render_template('register.html',
+            return render_template('register.html',  # CORREGIDO: era index.html
                                 invited_email=invited_email,
                                 invited_role=invited_role,
                                 invitation_token=invitation_token)
@@ -678,7 +678,7 @@ def send_invitation():
 def logout():
     logout_user()
     flash('Has cerrado sesión correctamente', 'info')
-    return redirect(url_for('auth.login'))
+    return redirect('/')  # CORREGIDO: Redirige a la página principal en lugar del login
 
 @bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():

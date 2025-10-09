@@ -52,12 +52,27 @@ def _build_products_list(queryset):
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    """Dashboard principal - Diferente contenido según rol"""
+    """Dashboard principal - Redirige según el rol"""
     admin_flag = is_user_admin(current_user)
-    return render_template('dashboard.html',
-                           user=current_user,
-                           username=getattr(current_user, 'nameUser', getattr(current_user, 'username', 'Usuario')),
-                           is_admin=admin_flag)
+    
+    if admin_flag:
+        # Si es admin, mostrar el dashboard de administrador
+        total_users = User.query.count()
+        try:
+            total_admins = User.query.filter_by(is_admin=True).count()
+            total_regular = User.query.filter_by(is_admin=False).count()
+        except Exception:
+            total_admins = 0
+            total_regular = total_users
+
+        return render_template('dashboard.html',
+                               total_users=total_users,
+                               total_admins=total_admins,
+                               total_regular=total_regular,
+                               username=getattr(current_user, 'nameUser', getattr(current_user, 'username', 'Admin')))
+    else:
+        # Si es usuario regular, redirigir al perfil
+        return redirect(url_for('users.profile'))
 
 
 @bp.route('/admin/usuarios')
