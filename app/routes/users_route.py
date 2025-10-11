@@ -1,26 +1,22 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
-from app.models1 import User, Product
+from app.models1 import User, Product, Category  # Asegúrate de importar Category
 from app.decorators import admin_required
 
-bp = Blueprint('users', __name__)  # mantiene el mismo nombre que ya usabas
-
+bp = Blueprint('users', __name__)
 
 def is_user_admin(user):
     """Detecta si el usuario es administrador (soporta varias implementaciones)."""
     try:
-        # atributo booleano habitual
         if getattr(user, 'is_admin', False):
             return True
-        # método clásico is_administrator()
         if hasattr(user, 'is_administrator') and callable(getattr(user, 'is_administrator')):
             return user.is_administrator()
     except Exception:
         pass
     return False
-
 
 def _build_products_list(queryset):
     """Normaliza objetos Product a dicts con keys estables que la plantilla usa."""
@@ -48,6 +44,191 @@ def _build_products_list(queryset):
         })
     return products
 
+# ============================
+# RUTAS PARA CATEGORÍAS
+# ============================
+
+@bp.route('/api/categories', methods=['GET'])
+@login_required
+@admin_required
+def get_categories():
+    try:
+        categories = Category.query.all()
+        categories_data = []
+        
+        for cat in categories:
+            # Contar productos en esta categoría
+            product_count = Product.query.filter_by(category=cat.nameCategory).count()
+            
+            categories_data.append({
+                'idCategory': cat.idCategory,
+                'nameCategory': cat.nameCategory,
+                'description': cat.description or '',
+                'status': cat.status,
+                'product_count': product_count
+            })
+        
+        return jsonify({
+            'success': True,
+            'categories': categories_data
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@bp.route('/api/categories', methods=['POST'])
+@login_required
+@admin_required
+def create_category():
+    try:
+        data = request.get_json()
+        
+        # Validar datos
+        if not data.get('nameCategory'):
+            return jsonify({'success': False, 'error': 'El nombre de la categoría es requerido'}), 400
+        
+        # Verificar si ya existe una categoría con ese nombre
+        existing_category = Category.query.filter_by(nameCategory=data['nameCategory']).first()
+        if existing_category:
+            return jsonify({'success': False, 'error': 'Ya existe una categoría con ese nombre'}), 400
+        
+        # Crear nueva categoría
+        new_category = Category(
+            nameCategory=data['nameCategory'],
+            description=data.get('description', ''),
+            status='Activa'
+        )
+        
+        db.session.add(new_category)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Categoría creada correctamente',
+            'category': {
+                'idCategory': new_category.idCategory,
+                'nameCategory': new_category.nameCategory,
+                'description': new_category.description,
+                'status': new_category.status,
+                'product_count': 0
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@bp.route('/api/categories/<int:category_id>', methods=['PUT'])
+@login_required
+@admin_required
+def update_category(category_id):
+    try:
+        data = request.get_json()
+        category = Category.query.get_or_404(category_id)
+        
+        # Verificar si el nuevo nombre ya existe en otra categoría
+        if data.get('nameCategory') and data['nameCategory'] != category.nameCategory:
+            existing_category = Category.query.filter_by(nameCategory=data['nameCategory']).first()
+            if existing_category:
+                return jsonify({'success': False, 'error': 'Ya existe una categoría con ese nombre'}), 400
+        
+        # Actualizar categoría
+        if 'nameCategory' in data:
+            category.nameCategory = data['nameCategory']
+        if 'description' in data:
+            category.description = data['description']
+        if 'status' in data:
+            category.status = data['status']
+        
+        db.session.commit()
+        
+        # Recalcular conteo de productos
+        product_count = Product.query.filter_by(category=category.nameCategory).count()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Categoría actualizada correctamente',
+            'category': {
+                'idCategory': category.idCategory,
+                'nameCategory': category.nameCategory,
+                'description': category.description,
+                'status': category.status,
+                'product_count': product_count
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@bp.route('/api/categories/<int:category_id>/status', methods=['PUT'])
+@login_required
+@admin_required
+def toggle_category_status(category_id):
+    try:
+        category = Category.query.get_or_404(category_id)
+        
+        # Cambiar estado
+        category.status = 'Inactiva' if category.status == 'Activa' else 'Activa'
+        
+        db.session.commit()
+        
+        # Recalcular conteo de productos
+        product_count = Product.query.filter_by(category=category.nameCategory).count()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Categoría {category.status.lower()} correctamente',
+            'category': {
+                'idCategory': category.idCategory,
+                'nameCategory': category.nameCategory,
+                'description': category.description,
+                'status': category.status,
+                'product_count': product_count
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@bp.route('/api/categories/<int:category_id>', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_category(category_id):
+    try:
+        category = Category.query.get_or_404(category_id)
+        
+        # Verificar si hay productos asociados a esta categoría
+        product_count = Product.query.filter_by(category=category.nameCategory).count()
+        if product_count > 0:
+            return jsonify({
+                'success': False, 
+                'error': f'No se puede eliminar la categoría porque tiene {product_count} producto(s) asociado(s)'
+            }), 400
+        
+        db.session.delete(category)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Categoría eliminada correctamente'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============================
+# RUTA PARA LA VISTA DE CATEGORÍAS
+# ============================
+
+@bp.route('/admin/categories')
+@login_required
+@admin_required
+def manage_categories():
+    """Vista de gestión de categorías"""
+    return render_template('admin_categories.html',
+                         username=getattr(current_user, 'nameUser', getattr(current_user, 'username', 'Admin')))
+
+# ============================
+# TUS RUTAS EXISTENTES (MANTENIENDO LAS QUE YA TENÍAS)
+# ============================
 
 @bp.route('/dashboard')
 @login_required

@@ -14,7 +14,7 @@
             --secondary-color: #ffffffff;
             --accent-color: #ffffffff;
             --light-bg: #f8f9fa;
-            --dark-text: #480792ff;
+            --dark-text: #000000ff;
             --light-text: #f4fdffff;
             --sidebar-width: 250px;
             --border-color: #a7a7a7ff;
@@ -245,7 +245,7 @@
         }
         
         .badge.bg-info {
-            background-color: #3498db !important;
+            background-color: #2b2188ff !important;
         }
         
         .badge.bg-danger {
@@ -389,7 +389,7 @@
             <!-- Welcome Card -->
             <div class="welcome-card">
               <span class="me-2">Hola, {{ current_user.nameUser }}</span>
-                <p class="lead">Bienvenido/a al panel de administración de tu tienda. Aquí puedes gestionar productos, categorías, pedidos y más.</p>
+                <p class="lead">Bienvenido/a al panel de administración de la tienda. Aquí puedes gestionar productos, categorías, pedidos y más.</p>
             </div>
 
             <!-- Statistics Cards -->
@@ -468,59 +468,113 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Punto de Venta</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Punto de Venta - Fashion Boutique</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-black: #1a1a1a;
+            --secondary-black: #2d2d2d;
+            --accent-color: #c8a97e;
+            --sale-red: #e74c3c;
+        }
+
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .content-section {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
+
         .table-container {
-            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
         }
-        .product-image {
-            max-width: 80px;
-            max-height: 80px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .invoice-preview {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        .invoice-header {
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .total-section {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .btn-action {
-            margin: 5px;
-        }
+
         .form-section {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .total-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary-black);
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .input-group-sm {
+            width: 120px;
+        }
+
+        .invoice-preview {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            margin-top: 2rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .invoice-header {
+            border-bottom: 3px solid var(--primary-black);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+
+        .search-result-card {
+            transition: all 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        .search-result-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-preview, .invoice-preview * {
+                visibility: visible;
+            }
+            .invoice-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+            }
+            .btn {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -529,7 +583,7 @@
         <!-- Punto de Venta Section -->
         <div id="pos" class="content-section">
             <div class="table-container">
-                <h2 class="mb-4">Facturacion Tienda Fisica</h2>
+                <h2 class="mb-4">Facturación Tienda Física</h2>
                 
                 <!-- Formulario de búsqueda de productos -->
                 <div class="form-section">
@@ -538,11 +592,15 @@
                         <div class="col-md-8">
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" id="searchProduct" placeholder="Código de barras, nombre o SKU del producto">
-                                <button class="btn btn-outline-secondary" type="button" id="searchBtn">Buscar</button>
+                                <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                                    <i class="fas fa-search me-1"></i> Buscar
+                                </button>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal">Agregar Producto Manualmente</button>
+                            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal">
+                                <i class="fas fa-plus me-1"></i> Agregar Producto Manualmente
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -578,8 +636,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="customerName" class="form-label">Nombre del Cliente</label>
-                                        <input type="text" class="form-control" id="customerName" placeholder="Nombre completo">
+                                        <label for="customerName" class="form-label">Nombre del Cliente *</label>
+                                        <input type="text" class="form-control" id="customerName" placeholder="Nombre completo" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -651,8 +709,12 @@
                                     </div>
                                 </div>
                                 
-                                <button class="btn btn-success w-100 mt-3" id="completeSale">Completar Venta</button>
-                                <button class="btn btn-outline-secondary w-100 mt-2" id="cancelSale">Cancelar Venta</button>
+                                <button class="btn btn-success w-100 mt-3" id="completeSale">
+                                    <i class="fas fa-check me-1"></i> Completar Venta
+                                </button>
+                                <button class="btn btn-outline-secondary w-100 mt-2" id="cancelSale">
+                                    <i class="fas fa-times me-1"></i> Cancelar Venta
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -669,11 +731,11 @@
                                 <p><strong>Fecha:</strong> <span id="invoiceDate">01/01/2023</span></p>
                             </div>
                             <div class="col-md-6 text-end">
-                                <h4>TIENDA EJEMPLO</h4>
+                                <h4>FASHION BOUTIQUE</h4>
                                 <p>Calle Principal, 123</p>
                                 <p>28001 Madrid, España</p>
                                 <p>Tel: +34 91 123 45 67</p>
-                                <p>info@tiendaejemplo.com</p>
+                                <p>info@fashionboutique.com</p>
                             </div>
                         </div>
                     </div>
@@ -734,44 +796,145 @@
                     </div>
                     
                     <div class="mt-4 text-center">
-                        <button class="btn btn-primary" id="printInvoice">Imprimir Factura</button>
-                        <button class="btn btn-success" id="sendInvoice">Enviar por Email</button>
-                        <button class="btn btn-outline-secondary" id="closePreview">Cerrar Vista Previa</button>
+                        <button class="btn btn-primary" id="printInvoice">
+                            <i class="fas fa-print me-1"></i> Imprimir Factura
+                        </button>
+                        <button class="btn btn-success" id="sendInvoice">
+                            <i class="fas fa-envelope me-1"></i> Enviar por Email
+                        </button>
+                        <button class="btn btn-outline-secondary" id="closePreview">
+                            <i class="fas fa-times me-1"></i> Cerrar Vista Previa
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para agregar producto manualmente -->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+   <!-- Modal para agregar producto manualmente - VERSIÓN MEJORADA -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="productModalLabel">
+                    <i class="fas fa-cube me-2"></i>Agregar Producto Manualmente
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="icon-container bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                        <i class="fas fa-plus text-primary fa-2x"></i>
+                    </div>
+                    <p class="text-muted">Complete la información del producto</p>
+                </div>
+                
+                <form id="productForm">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="productName" placeholder="Nombre del Producto" required>
+                                <label for="productName" class="text-muted">
+                                    <i class="fas fa-tag me-2"></i>Nombre del Producto *
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="productPrice" step="0.01" min="0" placeholder="0.00" required>
+                                <label for="productPrice" class="text-muted">
+                                    <i class="fas fa-dollar-sign me-2"></i>Precio Unitario *
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="productQuantity" min="1" value="1" placeholder="1" required>
+                                <label for="productQuantity" class="text-muted">
+                                    <i class="fas fa-boxes me-2"></i>Cantidad *
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="productDiscount" min="0" max="100" value="0" placeholder="0">
+                                <label for="productDiscount" class="text-muted">
+                                    <i class="fas fa-percent me-2"></i>Descuento (%)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview del producto -->
+                    <div class="card preview-card mt-3" id="productPreview" style="display: none;">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-eye me-2"></i>Vista Previa
+                            </h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">Producto:</small>
+                                    <p class="mb-1 fw-bold" id="previewName">-</p>
+                                </div>
+                                <div class="col-3">
+                                    <small class="text-muted">Precio:</small>
+                                    <p class="mb-1" id="previewPrice">$0.00</p>
+                                </div>
+                                <div class="col-3">
+                                    <small class="text-muted">Cantidad:</small>
+                                    <p class="mb-1" id="previewQuantity">0</p>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <small class="text-muted">Descuento:</small>
+                                    <p class="mb-1" id="previewDiscount">0%</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Subtotal:</small>
+                                    <p class="mb-1 fw-bold text-success" id="previewSubtotal">$0.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="addProductBtn">
+                    <i class="fas fa-plus me-1"></i>Agregar Producto
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+      <!-- Modal para resultados de búsqueda - VERSIÓN MEJORADA CON IMÁGENES -->
+    <div class="modal fade" id="searchResultsModal" tabindex="-1" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel">Agregar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="searchResultsModalLabel">
+                        <i class="fas fa-search me-2"></i>Resultados de Búsqueda
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="productName">
-                    </div>
-                    <div class="mb-3">
-                        <label for="productPrice" class="form-label">Precio Unitario</label>
-                        <input type="number" class="form-control" id="productPrice" step="0.01" min="0">
-                    </div>
-                    <div class="mb-3">
-                        <label for="productQuantity" class="form-label">Cantidad</label>
-                        <input type="number" class="form-control" id="productQuantity" min="1" value="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="productDiscount" class="form-label">Descuento (%)</label>
-                        <input type="number" class="form-control" id="productDiscount" min="0" max="100" value="0">
+                    <div id="searchResults" class="row">
+                        <!-- Los resultados se cargarán aquí -->
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="addProductBtn">Agregar Producto</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cerrar
+                    </button>
                 </div>
             </div>
         </div>
@@ -782,6 +945,7 @@
         // Variables globales
         let saleItems = [];
         let invoiceCounter = 1;
+        let isSendingInvoice = false; // ← NUEVA VARIABLE PARA CONTROLAR ENVÍO
 
         // Elementos del DOM
         const saleItemsTable = document.getElementById('saleItems').getElementsByTagName('tbody')[0];
@@ -795,8 +959,63 @@
         const cashSection = document.getElementById('cashSection');
         const paymentMethodSelect = document.getElementById('paymentMethod');
 
+        // ==============================================
+        // FUNCIONES DE PERSISTENCIA
+        // ==============================================
+
+        // Función para guardar la venta actual en localStorage
+        function saveSaleToStorage() {
+            const saleData = {
+                items: saleItems,
+                customer: {
+                    name: document.getElementById('customerName').value,
+                    id: document.getElementById('customerId').value,
+                    email: document.getElementById('customerEmail').value,
+                    phone: document.getElementById('customerPhone').value,
+                    address: document.getElementById('customerAddress').value
+                },
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('currentSale', JSON.stringify(saleData));
+        }
+
+        // Función para cargar la venta desde localStorage
+        function loadSaleFromStorage() {
+            const savedSale = localStorage.getItem('currentSale');
+            if (savedSale) {
+                const saleData = JSON.parse(savedSale);
+                saleItems = saleData.items || [];
+                
+                // Restaurar datos del cliente
+                if (saleData.customer) {
+                    document.getElementById('customerName').value = saleData.customer.name || '';
+                    document.getElementById('customerId').value = saleData.customer.id || '';
+                    document.getElementById('customerEmail').value = saleData.customer.email || '';
+                    document.getElementById('customerPhone').value = saleData.customer.phone || '';
+                    document.getElementById('customerAddress').value = saleData.customer.address || '';
+                }
+                
+                updateSaleTable();
+                updateTotals();
+                console.log('Venta cargada desde almacenamiento:', saleItems.length + ' productos');
+            }
+        }
+
+        // Función para limpiar el almacenamiento
+        function clearSaleStorage() {
+            localStorage.removeItem('currentSale');
+            console.log('Almacenamiento limpiado');
+        }
+
+        // ==============================================
+        // FUNCIONES PRINCIPALES (MODIFICADAS)
+        // ==============================================
+
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar venta guardada al iniciar
+            loadSaleFromStorage();
+            
             // Mostrar/ocultar sección de efectivo según método de pago
             paymentMethodSelect.addEventListener('change', function() {
                 cashSection.style.display = this.value === 'cash' ? 'block' : 'none';
@@ -807,6 +1026,16 @@
             
             // Botón para agregar producto manualmente
             document.getElementById('addProductBtn').addEventListener('click', addManualProduct);
+            
+            // Botón para buscar productos
+            document.getElementById('searchBtn').addEventListener('click', searchProducts);
+            
+            // Buscar al presionar Enter
+            document.getElementById('searchProduct').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchProducts();
+                }
+            });
             
             // Botón para completar venta
             document.getElementById('completeSale').addEventListener('click', completeSale);
@@ -819,19 +1048,54 @@
             document.getElementById('sendInvoice').addEventListener('click', sendInvoice);
             document.getElementById('closePreview').addEventListener('click', closeInvoicePreview);
             
+            // Guardar datos del cliente cuando cambien
+            document.getElementById('customerName').addEventListener('input', saveSaleToStorage);
+            document.getElementById('customerId').addEventListener('input', saveSaleToStorage);
+            document.getElementById('customerEmail').addEventListener('input', saveSaleToStorage);
+            document.getElementById('customerPhone').addEventListener('input', saveSaleToStorage);
+            document.getElementById('customerAddress').addEventListener('input', saveSaleToStorage);
+            
             // Inicializar con método de pago en efectivo
             cashSection.style.display = 'block';
         });
 
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'success') {
+            // Eliminar notificaciones anteriores
+            const existingNotifications = document.querySelectorAll('.alert-notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-notification alert-dismissible fade show`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto-eliminar después de 4 segundos
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+
         // Función para agregar producto manualmente
         function addManualProduct() {
-            const name = document.getElementById('productName').value;
+            const name = document.getElementById('productName').value.trim();
             const price = parseFloat(document.getElementById('productPrice').value);
             const quantity = parseInt(document.getElementById('productQuantity').value);
             const discount = parseFloat(document.getElementById('productDiscount').value);
             
             if (!name || isNaN(price) || isNaN(quantity)) {
-                alert('Por favor, complete todos los campos obligatorios');
+                showNotification('Por favor, complete todos los campos obligatorios', 'warning');
+                return;
+            }
+            
+            if (price <= 0) {
+                showNotification('El precio debe ser mayor a 0', 'warning');
                 return;
             }
             
@@ -843,15 +1107,171 @@
                 discount: discount
             });
             
-            // Cerrar modal y limpiar campos
-            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+            // Cerrar modal automáticamente
+            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            modal.hide();
+            
+            // Limpiar campos
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
             document.getElementById('productQuantity').value = '1';
             document.getElementById('productDiscount').value = '0';
+            
+            showNotification('Producto agregado correctamente', 'success');
         }
 
-        // Función para agregar producto a la venta
+        // Función para buscar productos
+        async function searchProducts() {
+            const searchTerm = document.getElementById('searchProduct').value.trim();
+            
+            if (!searchTerm) {
+                showNotification('Por favor, ingrese un término de búsqueda', 'warning');
+                return;
+            }
+            
+            try {
+                // Mostrar loading
+                document.getElementById('searchResults').innerHTML = `
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Buscando...</span>
+                        </div>
+                        <p class="mt-2">Buscando productos...</p>
+                    </div>
+                `;
+                
+                // Llamar a la API para buscar productos
+                const response = await fetch(`/api/products/search?q=${encodeURIComponent(searchTerm)}`);
+                const products = await response.json();
+                
+                displaySearchResults(products);
+                
+            } catch (error) {
+                console.error('Error buscando productos:', error);
+                document.getElementById('searchResults').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">Error al buscar productos</div>
+                    </div>
+                `;
+            }
+        }
+        // Función para mostrar resultados de búsqueda (VERSIÓN MEJORADA CON IMÁGENES)
+        function displaySearchResults(products) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (products.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <div class="empty-state">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No se encontraron productos</h5>
+                            <p class="text-muted">Intenta con otros términos de búsqueda</p>
+                            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#productModal">
+                                <i class="fas fa-plus me-1"></i> Agregar Producto Manualmente
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultsContainer.innerHTML = products.map(product => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card search-result-card h-100 product-card">
+                            <div class="card-img-container">
+                                <img src="${product.image || product.imageUrl || product.img || 'https://via.placeholder.com/300x200/007bff/ffffff?text=Producto'}" 
+                                     class="card-img-top" 
+                                     alt="${product.nameProduct || product.name}"
+                                     onerror="this.src='https://via.placeholder.com/300x200/6c757d/ffffff?text=Imagen+No+Disponible'">
+                                ${product.stock <= 5 ? `<span class="badge bg-warning low-stock-badge">Stock Bajo</span>` : ''}
+                                ${product.stock === 0 ? `<span class="badge bg-danger out-of-stock-badge">Agotado</span>` : ''}
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title text-truncate" title="${product.nameProduct || product.name}">
+                                    ${product.nameProduct || product.name}
+                                </h6>
+                                
+                                <div class="product-details mb-2">
+                                    <div class="price-section">
+                                        <strong class="text-primary">$${(product.price || 0).toFixed(2)}</strong>
+                                        ${product.originalPrice ? `
+                                            <small class="text-muted text-decoration-line-through ms-2">
+                                                $${product.originalPrice.toFixed(2)}
+                                            </small>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <div class="stock-info">
+                                        <small class="text-muted">
+                                            <i class="fas fa-box me-1"></i>
+                                            Stock: ${product.stock !== undefined ? product.stock : 'N/A'}
+                                        </small>
+                                    </div>
+                                    
+                                    ${product.sku ? `
+                                        <div class="sku-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-barcode me-1"></i>
+                                                SKU: ${product.sku}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${product.category ? `
+                                        <div class="category-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-tag me-1"></i>
+                                                ${product.category}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${product.brand ? `
+                                        <div class="brand-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-building me-1"></i>
+                                                ${product.brand}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                
+                                <div class="mt-auto">
+                                    <button class="btn btn-success w-100 btn-sm" 
+                                            onclick="addSearchedProduct(${JSON.stringify(product).replace(/"/g, '&quot;')})"
+                                            ${product.stock === 0 ? 'disabled' : ''}>
+                                        <i class="fas fa-cart-plus me-1"></i> 
+                                        ${product.stock === 0 ? 'Agotado' : 'Agregar a Venta'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Mostrar modal con resultados
+            const searchModal = new bootstrap.Modal(document.getElementById('searchResultsModal'));
+            searchModal.show();
+        }
+        // Función para agregar producto desde búsqueda
+        function addSearchedProduct(product) {
+            addProductToSale({
+                id: product.idProduct || product.id,
+                name: product.nameProduct || product.name,
+                price: product.price || 0,
+                quantity: 1,
+                discount: 0
+            });
+            
+            // Cerrar modal de búsqueda
+            bootstrap.Modal.getInstance(document.getElementById('searchResultsModal')).hide();
+            
+            // Limpiar campo de búsqueda
+            document.getElementById('searchProduct').value = '';
+            
+            showNotification('Producto agregado a la venta', 'success');
+        }
+
+        // Función para agregar producto a la venta (MODIFICADA CON PERSISTENCIA)
         function addProductToSale(product) {
             // Verificar si el producto ya está en la venta
             const existingItemIndex = saleItems.findIndex(item => item.id === product.id);
@@ -872,6 +1292,7 @@
             
             updateSaleTable();
             updateTotals();
+            saveSaleToStorage(); // ← GUARDAR EN STORAGE
         }
 
         // Función para actualizar la tabla de productos en venta
@@ -884,7 +1305,7 @@
                 
                 const row = saleItemsTable.insertRow();
                 row.innerHTML = `
-                    <td><img src="https://via.placeholder.com/80" alt="${item.name}" class="product-image"></td>
+                    <td><img src="https://via.placeholder.com/80/007bff/ffffff?text=P" alt="${item.name}" class="product-image"></td>
                     <td>${item.name}</td>
                     <td>$${item.price.toFixed(2)}</td>
                     <td>
@@ -897,13 +1318,15 @@
                     <td>${item.discount}%</td>
                     <td>$${subtotal.toFixed(2)}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" onclick="removeProduct(${index})">Eliminar</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeProduct(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 `;
             });
         }
 
-        // Función para actualizar cantidad mediante botones
+        // Función para actualizar cantidad mediante botones (MODIFICADA CON PERSISTENCIA)
         function updateQuantity(index, change) {
             saleItems[index].quantity += change;
             
@@ -913,9 +1336,10 @@
             
             updateSaleTable();
             updateTotals();
+            saveSaleToStorage(); // ← GUARDAR EN STORAGE
         }
 
-        // Función para actualizar cantidad mediante input
+        // Función para actualizar cantidad mediante input (MODIFICADA CON PERSISTENCIA)
         function updateQuantityInput(index, value) {
             const quantity = parseInt(value);
             
@@ -927,13 +1351,16 @@
             
             updateSaleTable();
             updateTotals();
+            saveSaleToStorage(); // ← GUARDAR EN STORAGE
         }
 
-        // Función para eliminar producto
+        // Función para eliminar producto (MODIFICADA CON PERSISTENCIA)
         function removeProduct(index) {
             saleItems.splice(index, 1);
             updateSaleTable();
             updateTotals();
+            saveSaleToStorage(); // ← GUARDAR EN STORAGE
+            showNotification('Producto eliminado', 'info');
         }
 
         // Función para actualizar totales
@@ -971,16 +1398,16 @@
             changeAmountElement.style.color = change >= 0 ? 'green' : 'red';
         }
 
-        // Función para completar la venta
+        // Función para completar la venta (MODIFICADA CON PERSISTENCIA)
         function completeSale() {
             if (saleItems.length === 0) {
-                alert('No hay productos en la venta');
+                showNotification('No hay productos en la venta', 'warning');
                 return;
             }
             
-            const customerName = document.getElementById('customerName').value;
+            const customerName = document.getElementById('customerName').value.trim();
             if (!customerName) {
-                alert('Por favor, ingrese el nombre del cliente');
+                showNotification('Por favor, ingrese el nombre del cliente', 'warning');
                 return;
             }
             
@@ -990,10 +1417,14 @@
                 const total = parseFloat(totalAmountElement.textContent.replace('$', ''));
                 
                 if (cashAmount < total) {
-                    alert('El monto en efectivo es menor al total de la venta');
+                    showNotification('El monto en efectivo es menor al total de la venta', 'warning');
                     return;
                 }
             }
+            
+            // RESETEAR ESTADO DE ENVÍO AL CREAR NUEVA FACTURA
+            isSendingInvoice = false;
+            resetSendInvoiceButton();
             
             // Generar factura
             generateInvoice();
@@ -1003,6 +1434,13 @@
             
             // Desplazarse a la factura
             invoicePreview.scrollIntoView({ behavior: 'smooth' });
+            
+            // LIMPIAR ALMACENAMIENTO SOLO DESPUÉS DE COMPLETAR
+            setTimeout(() => {
+                clearSaleStorage();
+            }, 1000);
+            
+            showNotification('Venta completada correctamente', 'success');
         }
 
         // Función para generar factura
@@ -1080,7 +1518,7 @@
             invoiceCounter++;
         }
 
-        // Función para cancelar venta
+        // Función para cancelar venta (MODIFICADA CON PERSISTENCIA)
         function cancelSale() {
             if (confirm('¿Está seguro de que desea cancelar la venta? Se perderán todos los datos.')) {
                 saleItems = [];
@@ -1099,6 +1537,15 @@
                 
                 // Ocultar vista previa si está visible
                 invoicePreview.style.display = 'none';
+                
+                // RESETEAR ESTADO DE ENVÍO
+                isSendingInvoice = false;
+                resetSendInvoiceButton();
+                
+                // LIMPIAR ALMACENAMIENTO
+                clearSaleStorage();
+                
+                showNotification('Venta cancelada', 'info');
             }
         }
 
@@ -1107,17 +1554,107 @@
             window.print();
         }
 
-        // Función para enviar factura por email
-        function sendInvoice() {
-            const customerEmail = document.getElementById('customerEmail').value;
-            
-            if (!customerEmail) {
-                alert('No se ha proporcionado un email para enviar la factura');
+        // Función para resetear el botón de enviar email
+        function resetSendInvoiceButton() {
+            const sendBtn = document.getElementById('sendInvoice');
+            sendBtn.innerHTML = '<i class="fas fa-envelope me-1"></i> Enviar por Email';
+            sendBtn.className = 'btn btn-success';
+            sendBtn.disabled = false;
+        }
+
+        // FUNCIÓN MEJORADA PARA ENVIAR FACTURA POR EMAIL - SOLO UNA VEZ
+        async function sendInvoice() {
+            // Verificar si ya se está enviando
+            if (isSendingInvoice) {
+                showNotification('La factura se está enviando, por favor espere...', 'info');
                 return;
             }
             
-            alert(`Factura enviada a ${customerEmail}`);
-            // En una implementación real, aquí se conectaría con un servicio de email
+            const customerEmail = document.getElementById('customerEmail').value;
+            
+            if (!customerEmail) {
+                showNotification('No se ha proporcionado un email para enviar la factura', 'warning');
+                return;
+            }
+            
+            try {
+                // Marcar como enviando para evitar múltiples envíos
+                isSendingInvoice = true;
+                
+                // Mostrar loading y deshabilitar botón
+                const sendBtn = document.getElementById('sendInvoice');
+                const originalText = sendBtn.innerHTML;
+                const originalClass = sendBtn.className;
+                
+                sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Enviando...';
+                sendBtn.className = 'btn btn-warning';
+                sendBtn.disabled = true;
+                
+                // Preparar datos de la factura
+                const invoiceData = {
+                    invoice_number: document.getElementById('invoiceNumber').textContent,
+                    customer_name: document.getElementById('customerName').value,
+                    customer_id: document.getElementById('customerId').value,
+                    customer_email: customerEmail,
+                    customer_phone: document.getElementById('customerPhone').value,
+                    customer_address: document.getElementById('customerAddress').value,
+                    payment_method: document.getElementById('paymentMethod').options[document.getElementById('paymentMethod').selectedIndex].text,
+                    payment_details: document.getElementById('invoicePaymentDetails').textContent,
+                    items: saleItems.map(item => ({
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        discount: item.discount,
+                        subtotal: (item.price * item.quantity) - ((item.price * item.quantity * item.discount) / 100)
+                    })),
+                    subtotal: parseFloat(document.getElementById('invoiceSubtotal').textContent.replace('$', '')),
+                    total_discount: parseFloat(document.getElementById('invoiceDiscount').textContent.replace('$', '')),
+                    taxes: parseFloat(document.getElementById('invoiceTaxes').textContent.replace('$', '')),
+                    total: parseFloat(document.getElementById('invoiceTotal').textContent.replace('$', ''))
+                };
+                
+                // Enviar al servidor
+                const response = await fetch('/send_invoice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(invoiceData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // ✅ ÉXITO - Cambiar botón a estado de enviado permanentemente
+                    sendBtn.innerHTML = '<i class="fas fa-check me-1"></i> Enviado';
+                    sendBtn.className = 'btn btn-success';
+                    sendBtn.disabled = true; // Deshabilitar permanentemente
+                    
+                    showNotification(`✅ Factura enviada correctamente a ${customerEmail}`, 'success');
+                } else {
+                    // ❌ Error - restaurar botón
+                    sendBtn.innerHTML = originalText;
+                    sendBtn.className = originalClass;
+                    sendBtn.disabled = false;
+                    showNotification('❌ Error enviando la factura: ' + result.message, 'danger');
+                    // Liberar el bloqueo en caso de error
+                    isSendingInvoice = false;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Restaurar botón en caso de error
+                const sendBtn = document.getElementById('sendInvoice');
+                sendBtn.innerHTML = '<i class="fas fa-envelope me-1"></i> Enviar por Email';
+                sendBtn.className = 'btn btn-success';
+                sendBtn.disabled = false;
+                
+                // Liberar el bloqueo en caso de error
+                isSendingInvoice = false;
+                
+                showNotification('❌ Error de conexión al enviar la factura', 'danger');
+            }
         }
 
         // Función para cerrar vista previa
@@ -1132,7 +1669,6 @@
     </script>
 </body>
 </html>
-
         <!-- Productos Section -->
         <div id="productos" class="content-section">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1310,62 +1846,466 @@
 </div>  
 
 
-        <!-- Categorías Section -->
-<div id="categorias" class="content-section">
-    <h2 class="mb-4">Gestión de Categorías</h2>
-    
-    <div class="row">
-        <div class="col-md-5">
-            <div class="form-container">
-                <h4>Agregar Nueva Categoría</h4>
-                <form id="categoriaForm">
-                    <div class="mb-3">
-                        <label for="categoriaNombre" class="form-label">Nombre de la categoría *</label>
-                        <input type="text" class="form-control" id="categoriaNombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="categoriaDescripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="categoriaDescripcion" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="saveCategoryBtn">
-                        <span id="saveCategoryText">Guardar Categoría</span>
-                        <span id="saveCategorySpinner" class="d-none">
-                            <span class="db-spinner spinner-border-sm"></span> Guardando...
-                        </span>
-                    </button>
-                </form>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Categorías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .content-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .form-container, .table-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+        }
+        .btn-action {
+            padding: 4px 8px;
+            margin: 0 2px;
+            font-size: 12px;
+        }
+        .status-active {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .db-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+        .alert-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Categorías Section -->
+    <div id="categorias" class="content-section">
+        <h2 class="mb-4">Gestión de Categorías</h2>
         
-        <div class="col-md-7">
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Productos</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="categoriesTableBody">
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <span class="db-spinner text-primary"></span>
-                                    <p class="mt-2">Cargando categorías...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-container">
+                    <h4>Agregar Nueva Categoría</h4>
+                    <form id="categoriaForm">
+                        <div class="mb-3">
+                            <label for="categoriaNombre" class="form-label">Nombre de la categoría *</label>
+                            <input type="text" class="form-control" id="categoriaNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoriaDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="categoriaDescripcion" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="saveCategoryBtn">
+                            <span id="saveCategoryText">Guardar Categoría</span>
+                            <span id="saveCategorySpinner" class="d-none">
+                                <span class="db-spinner spinner-border-sm"></span> Guardando...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="col-md-7">
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Productos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <span class="db-spinner text-primary"></span>
+                                        <p class="mt-2">Cargando categorías...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage">¿Está seguro de que desea realizar esta acción?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de edición -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId">
+                        <div class="mb-3">
+                            <label for="editCategoryName" class="form-label">Nombre de la categoría *</label>
+                            <input type="text" class="form-control" id="editCategoryName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="editCategoryDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryStatus" class="form-label">Estado</label>
+                            <select class="form-control" id="editCategoryStatus">
+                                <option value="Activa">Activa</option>
+                                <option value="Inactiva">Inactiva</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveEditCategory">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let currentAction = null;
+
+        // Mostrar alerta
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+
+        // Cargar categorías desde la base de datos
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('categoriesTableBody');
+                
+                if (!data.success) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${data.error}</td></tr>`;
+                    return;
+                }
+                
+                if (data.categories.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <p>No hay categorías registradas.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = data.categories.map(category => `
+                    <tr>
+                        <td>${category.idCategory}</td>
+                        <td>${category.nameCategory}</td>
+                        <td>${category.description}</td>
+                        <td>${category.product_count}</td>
+                        <td>
+                            <span class="${category.status === 'Activa' ? 'status-active' : 'status-inactive'}">
+                                ${category.status}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-action edit-category" 
+                                    data-id="${category.idCategory}"
+                                    data-name="${category.nameCategory}"
+                                    data-description="${category.description}"
+                                    data-status="${category.status}">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning btn-action toggle-status" 
+                                    data-id="${category.idCategory}">
+                                ${category.status === 'Activa' ? 'Desactivar' : 'Activar'}
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action delete-category" 
+                                    data-id="${category.idCategory}">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Agregar event listeners a los botones
+                document.querySelectorAll('.edit-category').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        const name = this.getAttribute('data-name');
+                        const description = this.getAttribute('data-description');
+                        const status = this.getAttribute('data-status');
+                        openEditModal(id, name, description, status);
+                    });
+                });
+                
+                document.querySelectorAll('.toggle-status').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        showConfirmModal(
+                            '¿Está seguro de que desea cambiar el estado de esta categoría?',
+                            () => toggleCategoryStatus(id)
+                        );
+                    });
+                });
+                
+                document.querySelectorAll('.delete-category').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        showConfirmModal(
+                            '¿Está seguro de que desea eliminar esta categoría? Esta acción no se puede deshacer.',
+                            () => deleteCategory(id)
+                        );
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                showAlert('danger', 'Error al cargar las categorías');
+            }
+        }
+
+        // Mostrar modal de confirmación
+        function showConfirmModal(message, confirmCallback) {
+            document.getElementById('modalMessage').textContent = message;
+            currentAction = confirmCallback;
+            
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+
+        // Abrir modal de edición
+        function openEditModal(id, name, description, status) {
+            document.getElementById('editCategoryId').value = id;
+            document.getElementById('editCategoryName').value = name;
+            document.getElementById('editCategoryDescription').value = description;
+            document.getElementById('editCategoryStatus').value = status;
+            
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // Cambiar estado de categoría
+        async function toggleCategoryStatus(id) {
+            try {
+                const response = await fetch(`/api/categories/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    loadCategories();
+                } else {
+                    showAlert('danger', data.error);
+                }
+            } catch (error) {
+                console.error('Error toggling category status:', error);
+                showAlert('danger', 'Error al cambiar el estado de la categoría');
+            }
+        }
+
+        // Eliminar categoría
+        async function deleteCategory(id) {
+            try {
+                const response = await fetch(`/api/categories/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    loadCategories();
+                } else {
+                    showAlert('danger', data.error);
+                }
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                showAlert('danger', 'Error al eliminar la categoría');
+            }
+        }
+
+        // Guardar categoría editada
+        async function saveEditedCategory() {
+            const id = document.getElementById('editCategoryId').value;
+            const name = document.getElementById('editCategoryName').value.trim();
+            const description = document.getElementById('editCategoryDescription').value.trim();
+            const status = document.getElementById('editCategoryStatus').value;
+            
+            if (!name) {
+                showAlert('warning', 'El nombre de la categoría es requerido');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/categories/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nameCategory: name,
+                        description: description,
+                        status: status
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    loadCategories();
+                    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                } else {
+                    showAlert('danger', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showAlert('danger', 'Error al actualizar la categoría');
+            }
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar categorías al iniciar
+            loadCategories();
+            
+            // Manejar envío del formulario de nueva categoría
+            document.getElementById('categoriaForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const nombre = document.getElementById('categoriaNombre').value.trim();
+                const descripcion = document.getElementById('categoriaDescripcion').value.trim();
+                
+                if (!nombre) {
+                    showAlert('warning', 'Por favor, ingrese un nombre para la categoría.');
+                    return;
+                }
+                
+                // Mostrar spinner de carga
+                document.getElementById('saveCategoryText').classList.add('d-none');
+                document.getElementById('saveCategorySpinner').classList.remove('d-none');
+                document.getElementById('saveCategoryBtn').disabled = true;
+                
+                try {
+                    const response = await fetch('/api/categories', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            nameCategory: nombre,
+                            description: descripcion
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showAlert('success', data.message);
+                        document.getElementById('categoriaForm').reset();
+                        loadCategories();
+                    } else {
+                        showAlert('danger', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error saving category:', error);
+                    showAlert('danger', 'Error al guardar la categoría');
+                } finally {
+                    // Ocultar spinner
+                    document.getElementById('saveCategoryText').classList.remove('d-none');
+                    document.getElementById('saveCategorySpinner').classList.add('d-none');
+                    document.getElementById('saveCategoryBtn').disabled = false;
+                }
+            });
+            
+            // Manejar guardar categoría editada
+            document.getElementById('saveEditCategory').addEventListener('click', saveEditedCategory);
+            
+            // Manejar confirmación de acciones
+            document.getElementById('confirmAction').addEventListener('click', function() {
+                if (currentAction) {
+                    currentAction();
+                    bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
         <!-- Sección de Usuarios -->
         <div id="usuarios" class="content-section">
             <!-- Encabezado -->
@@ -1382,9 +2322,7 @@
                         <button class="btn btn-invite me-2" id="inviteUserBtn" data-bs-toggle="modal" data-bs-target="#inviteModal">
                             <i class="bi bi-envelope-plus"></i> Invitar Usuario
                         </button>
-                        <button class="btn btn-primary" id="addUserBtn" data-bs-toggle="modal" data-bs-target="#userModal">
-                            <i class="bi bi-plus-circle"></i> Nuevo Usuario
-                        </button>
+                        
                     </div>
                 </div>
             </div>
@@ -1417,7 +2355,6 @@
                             <label for="inviteRole" class="form-label">Tipo de Usuario *</label>
                             <select class="form-select" id="inviteRole" required>
                                 <option value="Cliente">Cliente</option>
-                                <option value="Administrador">Administrador</option>
                             </select>
                         </div>
                         
@@ -1473,7 +2410,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Enviar invitación - CÓDIGO CORREGIDO
+    // Enviar invitación - 
     document.getElementById('sendInvite').addEventListener('click', function() {
         const email = document.getElementById('inviteEmail').value;
         const role = document.getElementById('inviteRole').value;
@@ -2209,247 +3146,344 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // ==============================================
-            // CÓDIGO PARA GESTIÓN DE USUARIOS
-            // ==============================================
-            
-            // Función para cargar usuarios
-            async function loadUsers() {
-                try {
-                    const response = await fetch('/api/users');
-                    const users = await response.json();
-                    
-                    const usersTableBody = document.getElementById('usersTableBody');
-                    usersTableBody.innerHTML = '';
-                    
-                    if (users.length === 0) {
-                        usersTableBody.innerHTML = `
-                            <tr>
-                                <td colspan="8" class="text-center">No hay usuarios registrados</td>
-                            </tr>
-                        `;
-                        return;
-                    }
-                    
-                    users.forEach(user => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${user.id}</td>
-                            <td>
-                                <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=2c3e50&color=fff'}" 
-                                    class="rounded-circle" width="40" height="40" alt="Avatar">
-                            </td>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>
-                                <span class="badge ${user.role === 'Administrador' ? 'bg-primary' : user.role === 'Vendedor' ? 'bg-info' : 'bg-secondary'}">
-                                    ${user.role}
-                                </span>
-                            </td>
-                            <td>${user.created_at}</td>
-                            <td>
-                                <span class="badge ${user.status === 'Activo' ? 'bg-success' : 'bg-danger'}">${user.status}</span>
-                            </td>
-                            <td class="action-buttons">
-                                <button class="btn btn-sm btn-outline-primary view-user" data-id="${user.id}">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning edit-user" data-id="${user.id}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger delete-user" data-id="${user.id}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        `;
-                        usersTableBody.appendChild(row);
-                    });
-                    
-                    // Agregar event listeners a los botones de usuario
-                    attachUserEventListeners();
-                } catch (error) {
-                    console.error('Error al cargar usuarios:', error);
-                }
-            }
-            
-            function attachUserEventListeners() {
-                // Botón de ver usuario
-                document.querySelectorAll('.view-user').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
-                        viewUser(id);
-                    });
-                });
-                
-                // Botón de editar usuario
-                document.querySelectorAll('.edit-user').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
-                        editUser(id);
-                    });
-                });
-                
-                // Botón de eliminar usuario
-                document.querySelectorAll('.delete-user').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
-                        deleteUserFromDB(id);
-                    });
-                });
-            }
+        // ==============================================
+// CÓDIGO PARA GESTIÓN DE USUARIOS CON CONTRASEÑA DE SEGURIDAD
+// ==============================================
 
-            // Función para ver detalles de usuario
-            async function viewUser(id) {
-                try {
-                    const response = await fetch(`/api/users/${id}`);
-                    const user = await response.json();
-                    
-                    if (user) {
-                        alert(`Detalles del usuario:\n\nID: ${user.id}\nNombre: ${user.name}\nEmail: ${user.email}\nRol: ${user.role}\nEstado: ${user.status}\nRegistrado: ${user.created_at}`);
-                    }
-                } catch (error) {
-                    console.error('Error al cargar usuario:', error);
-                }
-            }
+// Contraseña de seguridad
+const SECURITY_PASSWORD = "1055127011Cd.";
 
-            // Función para editar usuario
-            async function editUser(id) {
-                try {
-                    const response = await fetch(`/api/users/${id}`);
-                    const user = await response.json();
-                    
-                    if (user) {
-                        document.getElementById('userModalLabel').textContent = 'Editar Usuario';
-                        document.getElementById('userId').value = user.id;
-                        document.getElementById('userName').value = user.name;
-                        document.getElementById('userEmail').value = user.email;
-                        document.getElementById('userPassword').value = '';
-                        document.getElementById('userRole').value = user.role;
-                        document.getElementById('userStatus').value = user.status;
-                        
-                        const modal = new bootstrap.Modal(document.getElementById('userModal'));
-                        modal.show();
-                    }
-                } catch (error) {
-                    console.error('Error al cargar usuario para editar:', error);
-                    alert('Error al cargar el usuario para editar');
-                }
+// Función para verificar contraseña de seguridad
+async function verifySecurityPassword(action = "realizar esta acción") {
+    return new Promise((resolve) => {
+        // Crear modal de contraseña
+        const passwordModal = document.createElement('div');
+        passwordModal.className = 'modal fade';
+        passwordModal.id = 'securityPasswordModal';
+        passwordModal.innerHTML = `
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Verificación de Seguridad</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Para ${action}, ingrese la contraseña de seguridad:</p>
+                        <div class="mb-3">
+                            <label for="securityPasswordInput" class="form-label">Contraseña de Seguridad</label>
+                            <input type="password" class="form-control" id="securityPasswordInput" placeholder="Ingrese la contraseña">
+                        </div>
+                        <div id="passwordError" class="alert alert-danger d-none" role="alert">
+                            Contraseña incorrecta. Intente nuevamente.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="confirmSecurityPassword">Verificar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(passwordModal);
+        
+        const modal = new bootstrap.Modal(passwordModal);
+        const passwordInput = document.getElementById('securityPasswordInput');
+        const errorDiv = document.getElementById('passwordError');
+        
+        // Función para verificar contraseña
+        const verifyPassword = () => {
+            if (passwordInput.value === SECURITY_PASSWORD) {
+                modal.hide();
+                setTimeout(() => {
+                    document.body.removeChild(passwordModal);
+                }, 500);
+                resolve(true);
+            } else {
+                errorDiv.classList.remove('d-none');
+                passwordInput.value = '';
+                passwordInput.focus();
             }
+        };
+        
+        // Event listeners
+        document.getElementById('confirmSecurityPassword').addEventListener('click', verifyPassword);
+        
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+        
+        // Cuando se cierra el modal sin verificar
+        passwordModal.addEventListener('hidden.bs.modal', () => {
+            setTimeout(() => {
+                if (document.body.contains(passwordModal)) {
+                    document.body.removeChild(passwordModal);
+                }
+                resolve(false);
+            }, 500);
+        });
+        
+        modal.show();
+        passwordInput.focus();
+    });
+}
 
-            // Función para eliminar usuario
-            async function deleteUserFromDB(id) {
-                if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-                    try {
-                        const response = await fetch(`/api/users/${id}`, {
-                            method: 'DELETE'
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error('Error al eliminar usuario');
-                        }
-                        
-                        await loadUsers();
-                        await updateDashboardStats();
-                        alert('Usuario eliminado correctamente');
-                    } catch (error) {
-                        console.error('Error al eliminar usuario:', error);
-                        alert('Error al eliminar el usuario');
-                    }
-                }
-            }
+// Función para cargar usuarios
+async function loadUsers() {
+    try {
+        const response = await fetch('/api/users');
+        const users = await response.json();
+        
+        const usersTableBody = document.getElementById('usersTableBody');
+        usersTableBody.innerHTML = '';
+        
+        if (users.length === 0) {
+            usersTableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center">No hay usuarios registrados</td>
+                </tr>
+            `;
+            return;
+        }
+        
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>
+                    <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=2c3e50&color=fff'}" 
+                        class="rounded-circle" width="40" height="40" alt="Avatar">
+                </td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>
+                    <span class="badge ${user.role === 'Administrador' ? 'bg-primary' : user.role === 'Vendedor' ? 'bg-info' : 'bg-secondary'}">
+                        ${user.role}
+                    </span>
+                </td>
+                <td>${user.created_at}</td>
+                <td>
+                    <span class="badge ${user.status === 'Activo' ? 'bg-success' : 'bg-danger'}">${user.status}</span>
+                </td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary view-user" data-id="${user.id}">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning edit-user" data-id="${user.id}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-user" data-id="${user.id}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            usersTableBody.appendChild(row);
+        });
+        
+        // Agregar event listeners a los botones de usuario
+        attachUserEventListeners();
+    } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+    }
+}
+
+function attachUserEventListeners() {
+    // Botón de ver usuario
+    document.querySelectorAll('.view-user').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            viewUser(id);
+        });
+    });
+    
+    // Botón de editar usuario
+    document.querySelectorAll('.edit-user').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
             
-            // Guardar usuario (nuevo o editado)
-            document.getElementById('saveUser').addEventListener('click', async function() {
-                const userId = document.getElementById('userId').value;
-                const name = document.getElementById('userName').value;
-                const email = document.getElementById('userEmail').value;
-                const password = document.getElementById('userPassword').value;
-                const role = document.getElementById('userRole').value;
-                const status = document.getElementById('userStatus').value;
-                
-                // Validaciones
-                if (!name || !email || !role || !status) {
-                    alert('Por favor, complete todos los campos obligatorios.');
-                    return;
-                }
-                
-                // Validación de email
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    alert('Por favor, ingrese un email válido.');
-                    return;
-                }
-                
-                // Si es un nuevo usuario, validar la contraseña
-                if (!userId && !password) {
-                    alert('Por favor, ingrese una contraseña para el nuevo usuario.');
-                    return;
-                }
-                
-                // Mostrar indicador de carga
-                document.getElementById('saveUserText').classList.add('d-none');
-                document.getElementById('saveUserSpinner').classList.remove('d-none');
-                this.disabled = true;
-                
-                try {
-                    const url = userId ? `/api/users/${userId}` : '/api/users';
-                    const method = userId ? 'PUT' : 'POST';
-                    
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name: name,
-                            email: email,
-                            password: password,
-                            role: role,
-                            status: status
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error(result.error || 'Error al guardar usuario');
-                    }
-                    
-                    await loadUsers();
-                    await updateDashboardStats();
-                    
-                    // Cerrar modal y resetear formulario
-                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-                    document.getElementById('userForm').reset();
-                    document.getElementById('userId').value = '';
-                    
-                    alert('Usuario guardado correctamente');
-                } catch (error) {
-                    console.error('Error al guardar usuario:', error);
-                    alert('Error al guardar el usuario: ' + error.message);
-                } finally {
-                    // Ocultar indicador de carga
-                    document.getElementById('saveUserText').classList.remove('d-none');
-                    document.getElementById('saveUserSpinner').classList.add('d-none');
-                    this.disabled = false;
-                }
+            // Verificar contraseña antes de editar
+            const isVerified = await verifySecurityPassword("editar este usuario");
+            if (isVerified) {
+                editUser(id);
+            }
+        });
+    });
+    
+    // Botón de eliminar usuario
+    document.querySelectorAll('.delete-user').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            
+            // Verificar contraseña antes de eliminar
+            const isVerified = await verifySecurityPassword("eliminar este usuario");
+            if (isVerified) {
+                deleteUserFromDB(id);
+            }
+        });
+    });
+}
+
+// Función para ver detalles de usuario
+async function viewUser(id) {
+    try {
+        const response = await fetch(`/api/users/${id}`);
+        const user = await response.json();
+        
+        if (user) {
+            alert(`Detalles del usuario:\n\nID: ${user.id}\nNombre: ${user.name}\nEmail: ${user.email}\nRol: ${user.role}\nEstado: ${user.status}\nRegistrado: ${user.created_at}`);
+        }
+    } catch (error) {
+        console.error('Error al cargar usuario:', error);
+    }
+}
+
+// Función para editar usuario
+async function editUser(id) {
+    try {
+        const response = await fetch(`/api/users/${id}`);
+        const user = await response.json();
+        
+        if (user) {
+            document.getElementById('userModalLabel').textContent = 'Editar Usuario';
+            document.getElementById('userId').value = user.id;
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userRole').value = user.role;
+            document.getElementById('userStatus').value = user.status;
+            
+            const modal = new bootstrap.Modal(document.getElementById('userModal'));
+            modal.show();
+        }
+    } catch (error) {
+        console.error('Error al cargar usuario para editar:', error);
+        alert('Error al cargar el usuario para editar');
+    }
+}
+
+// Función para eliminar usuario
+async function deleteUserFromDB(id) {
+    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method: 'DELETE'
             });
             
-            // Cuando se cierra el modal, resetear el formulario
-            document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
-                document.getElementById('userForm').reset();
-                document.getElementById('userId').value = '';
-                document.getElementById('userModalLabel').textContent = 'Agregar Nuevo Usuario';
-            });
-            
-            // Botón de actualizar usuarios
-            const refreshUsersBtn = document.getElementById('refreshUsers');
-            if (refreshUsersBtn) {
-                refreshUsersBtn.addEventListener('click', function() {
-                    loadUsers();
-                });
+            if (!response.ok) {
+                throw new Error('Error al eliminar usuario');
             }
             
+            await loadUsers();
+            await updateDashboardStats();
+            alert('Usuario eliminado correctamente');
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+            alert('Error al eliminar el usuario');
+        }
+    }
+}
+
+// Guardar usuario (nuevo o editado)
+document.getElementById('saveUser').addEventListener('click', async function() {
+    const userId = document.getElementById('userId').value;
+    const name = document.getElementById('userName').value;
+    const email = document.getElementById('userEmail').value;
+    const password = document.getElementById('userPassword').value;
+    const role = document.getElementById('userRole').value;
+    const status = document.getElementById('userStatus').value;
+    
+    // Validaciones
+    if (!name || !email || !role || !status) {
+        alert('Por favor, complete todos los campos obligatorios.');
+        return;
+    }
+    
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Por favor, ingrese un email válido.');
+        return;
+    }
+    
+    // Si es un nuevo usuario, validar la contraseña
+    if (!userId && !password) {
+        alert('Por favor, ingrese una contraseña para el nuevo usuario.');
+        return;
+    }
+    
+    // Si es edición de usuario existente, verificar contraseña de seguridad
+    if (userId) {
+        const isVerified = await verifySecurityPassword("guardar los cambios del usuario");
+        if (!isVerified) {
+            return; // No continuar si la contraseña es incorrecta
+        }
+    }
+    
+    // Mostrar indicador de carga
+    document.getElementById('saveUserText').classList.add('d-none');
+    document.getElementById('saveUserSpinner').classList.remove('d-none');
+    this.disabled = true;
+    
+    try {
+        const url = userId ? `/api/users/${userId}` : '/api/users';
+        const method = userId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password,
+                role: role,
+                status: status
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Error al guardar usuario');
+        }
+        
+        await loadUsers();
+        await updateDashboardStats();
+        
+        // Cerrar modal y resetear formulario
+        bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+        document.getElementById('userForm').reset();
+        document.getElementById('userId').value = '';
+        
+        alert('Usuario guardado correctamente');
+    } catch (error) {
+        console.error('Error al guardar usuario:', error);
+        alert('Error al guardar el usuario: ' + error.message);
+    } finally {
+        // Ocultar indicador de carga
+        document.getElementById('saveUserText').classList.remove('d-none');
+        document.getElementById('saveUserSpinner').classList.add('d-none');
+        this.disabled = false;
+    }
+});
+
+// Cuando se cierra el modal, resetear el formulario
+document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
+    document.getElementById('userForm').reset();
+    document.getElementById('userId').value = '';
+    document.getElementById('userModalLabel').textContent = 'Agregar Nuevo Usuario';
+});
+
+// Botón de actualizar usuarios
+const refreshUsersBtn = document.getElementById('refreshUsers');
+if (refreshUsersBtn) {
+    refreshUsersBtn.addEventListener('click', function() {
+        loadUsers();
+    });
+}
             // ==============================================
             // INICIALIZACIÓN DE LA APLICACIÓN
             // ==============================================

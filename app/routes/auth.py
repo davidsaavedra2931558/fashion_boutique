@@ -16,6 +16,253 @@ logger = logging.getLogger(__name__)
 # Crear el Blueprint
 bp = Blueprint('auth', __name__)
 
+# FUNCIÓN PARA ENVIAR FACTURA POR EMAIL
+def send_invoice_email(customer_email, customer_name, invoice_number, invoice_html, invoice_data):
+    try:
+        msg = Message(
+            subject=f'🧾 Factura {invoice_number} - Fashion Boutique',
+            sender=('Fashion Boutique', 'noreply.fashionboutique@gmail.com'),
+            recipients=[customer_email]
+        )
+
+        # Crear el cuerpo HTML del email
+        msg.html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }}
+                .email-container {{
+                    max-width: 800px;
+                    margin: 20px auto;
+                    background: white;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                }}
+                .header {{
+                    background: #000000;
+                    color: white;
+                    padding: 30px;
+                    text-align: center;
+                }}
+                .header h1 {{
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: bold;
+                }}
+                .content {{
+                    padding: 30px;
+                }}
+                .invoice-preview {{
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }}
+                .invoice-table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }}
+                .invoice-table th,
+                .invoice-table td {{
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }}
+                .invoice-table th {{
+                    background-color: #000;
+                    color: white;
+                }}
+                .totals {{
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin-top: 20px;
+                }}
+                .footer {{
+                    background: #f8f9fa;
+                    padding: 20px;
+                    text-align: center;
+                    color: #666;
+                    font-size: 12px;
+                }}
+                .thank-you {{
+                    text-align: center;
+                    margin: 30px 0;
+                    font-size: 18px;
+                    color: #333;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <h1>FASHION BOUTIQUE</h1>
+                    <p>Factura Electrónica</p>
+                </div>
+                
+                <div class="content">
+                    <h2>¡Hola {customer_name}!</h2>
+                    <p>Gracias por tu compra en <strong>Fashion Boutique</strong>. Adjuntamos tu factura para que la tengas disponible.</p>
+                    
+                    <div class="invoice-preview">
+                        <h3>Factura #{invoice_number}</h3>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                            <div>
+                                <strong>Fecha:</strong> {datetime.now().strftime('%d/%m/%Y')}<br>
+                                <strong>Cliente:</strong> {customer_name}
+                            </div>
+                            <div style="text-align: right;">
+                                <strong>Método de Pago:</strong> {invoice_data.get('payment_method', 'N/A')}<br>
+                                {invoice_data.get('payment_details', '')}
+                            </div>
+                        </div>
+                        
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Cantidad</th>
+                                    <th>Descuento</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {invoice_html}
+                            </tbody>
+                        </table>
+                        
+                        <div class="totals" style="text-align: right;">
+                            <div style="margin-bottom: 10px;">
+                                <strong>Subtotal:</strong> ${invoice_data.get('subtotal', 0):.2f}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>Descuento:</strong> ${invoice_data.get('total_discount', 0):.2f}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>Impuestos (21%):</strong> ${invoice_data.get('taxes', 0):.2f}
+                            </div>
+                            <div style="font-size: 18px; font-weight: bold;">
+                                <strong>TOTAL:</strong> ${invoice_data.get('total', 0):.2f}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="thank-you">
+                        <p>¡Gracias por confiar en Fashion Boutique! 🛍️</p>
+                        <p>Esperamos verte pronto de nuevo.</p>
+                    </div>
+                    
+                    <p>Si tienes alguna pregunta sobre tu factura, no dudes en contactarnos.</p>
+                </div>
+                
+                <div class="footer">
+                    <p>© 2025 Fashion Boutique. Todos los derechos reservados.</p>
+                    <p>Este es un email automático, por favor no responder.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        # Versión de texto plano para clientes de email que no soportan HTML
+        msg.body = f"""
+        FACTURA {invoice_number} - Fashion Boutique
+        
+        ¡Hola {customer_name}!
+        
+        Gracias por tu compra en Fashion Boutique.
+        
+        Detalles de la factura:
+        - Número: {invoice_number}
+        - Fecha: {datetime.now().strftime('%d/%m/%Y')}
+        - Cliente: {customer_name}
+        - Método de Pago: {invoice_data.get('payment_method', 'N/A')}
+        
+        Productos:
+        {chr(10).join([f"- {item.get('name', '')} | ${item.get('price', 0):.2f} x {item.get('quantity', 0)} = ${item.get('subtotal', 0):.2f}" for item in invoice_data.get('items', [])])}
+        
+        Resumen:
+        - Subtotal: ${invoice_data.get('subtotal', 0):.2f}
+        - Descuento: ${invoice_data.get('total_discount', 0):.2f}
+        - Impuestos (21%): ${invoice_data.get('taxes', 0):.2f}
+        - TOTAL: ${invoice_data.get('total', 0):.2f}
+        
+        ¡Gracias por tu compra!
+        
+        Fashion Boutique
+        """
+
+        mail.send(msg)
+        logger.info(f"✅ Factura {invoice_number} enviada a {customer_email}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Error enviando factura: {str(e)}")
+        return False
+
+# RUTA PARA ENVIAR FACTURAS
+@bp.route('/send_invoice', methods=['POST'])
+def send_invoice():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'Datos no válidos'})
+        
+        # Obtener datos de la factura
+        invoice_data = data
+        
+        # Obtener información del cliente
+        customer_email = invoice_data.get('customer_email')
+        customer_name = invoice_data.get('customer_name', 'Cliente')
+        invoice_number = invoice_data.get('invoice_number', 'N/A')
+        
+        if not customer_email:
+            return jsonify({'success': False, 'message': 'Email del cliente requerido'})
+        
+        # Crear el contenido HTML de los items de la factura
+        items_html = ""
+        for item in invoice_data.get('items', []):
+            items_html += f"""
+            <tr>
+                <td>{item.get('name', '')}</td>
+                <td>${item.get('price', 0):.2f}</td>
+                <td>{item.get('quantity', 0)}</td>
+                <td>{item.get('discount', 0)}%</td>
+                <td>${item.get('subtotal', 0):.2f}</td>
+            </tr>
+            """
+        
+        # Enviar el email
+        if send_invoice_email(customer_email, customer_name, invoice_number, items_html, invoice_data):
+            return jsonify({
+                'success': True, 
+                'message': f'✅ Factura enviada exitosamente a {customer_email}'
+            })
+        else:
+            return jsonify({
+                'success': False, 
+                'message': '❌ Error al enviar la factura por email'
+            })
+            
+    except Exception as e:
+        logger.error(f"❌ Error enviando factura: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'❌ Error del servidor: {str(e)}'
+        })
+
+# (MANTÉN TODAS LAS OTRAS FUNCIONES QUE YA TENÍAS)
 # FUNCIÓN PARA ENVIAR EMAIL DE BIENVENIDA
 def send_welcome_email(user):
     try:
@@ -536,7 +783,7 @@ def register():
         
         if User.query.filter_by(nameUser=nameUser).first():
             flash('El nombre de usuario ya existe', 'danger')
-            return render_template('register.html',  # CORREGIDO: era index.html
+            return render_template('register.html',
                                 invited_email=invited_email,
                                 invited_role=invited_role,
                                 invitation_token=invitation_token)
@@ -678,7 +925,7 @@ def send_invitation():
 def logout():
     logout_user()
     flash('Has cerrado sesión correctamente', 'info')
-    return redirect('/')  # CORREGIDO: Redirige a la página principal en lugar del login
+    return redirect('/')
 
 @bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
