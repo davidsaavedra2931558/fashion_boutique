@@ -22,11 +22,11 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'clave-secreta-por-defecto-cambiar-en-produccion')
     
     # ✅ CONFIGURACIÓN DE BD CON VARIABLES DE ENTORNO (PARA PRODUCCIÓN)
-    db_host = os.getenv('DB_HOST', 'localhost')
-    db_user = os.getenv('DB_USER', 'root')
-    db_password = os.getenv('DB_PASSWORD', '')
-    db_name = os.getenv('DB_NAME', 'fashion_boutique')
-    db_port = os.getenv('DB_PORT', '3306')
+    db_host = os.getenv('DB_HOST', 'isladigital.xyz')
+    db_user = os.getenv('DB_USER', 'cesar')
+    db_password = os.getenv('DB_PASSWORD', 'cesarc')
+    db_name = os.getenv('DB_NAME', 'f58_cesar')
+    db_port = os.getenv('DB_PORT', '3311')
     
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
