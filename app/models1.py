@@ -1,9 +1,14 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+# ✅ SOLUCIÓN: Crear instancia de db aquí para evitar importación circular
+db = SQLAlchemy()
+
 class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+    
     idUser = db.Column(db.Integer, primary_key=True)
     nameUser = db.Column(db.String(50), unique=True, nullable=False)
     emailUser = db.Column(db.String(120), unique=True, nullable=False)
@@ -18,6 +23,8 @@ class User(db.Model, UserMixin):
 
     # Relación con el carrito
     cart_items = db.relationship('CartItem', backref='user', lazy=True, cascade="all, delete-orphan")
+    # Relación con órdenes
+    orders = db.relationship('Order', backref='user', lazy=True)
     
     def get_id(self):
         return str(self.idUser)
@@ -47,6 +54,7 @@ class User(db.Model, UserMixin):
 # Modelo para invitaciones
 class Invitation(db.Model):
     __tablename__ = 'invitation'
+    
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False, index=True)
     role = db.Column(db.String(50), nullable=False)
@@ -61,21 +69,10 @@ class Invitation(db.Model):
     def is_expired(self):
         return datetime.utcnow() > self.expires_at
 
-# Modelo para items del carrito
-class CartItem(db.Model):
-    __tablename__ = 'cart_item'
-    idCartItem = db.Column(db.Integer, primary_key=True)
-    idUser = db.Column(db.Integer, db.ForeignKey('user.idUser'), nullable=False)
-    idProduct = db.Column(db.Integer, db.ForeignKey('product.idProduct'), nullable=False)
-    quantity = db.Column(db.Integer, default=1, nullable=False)
-    added_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relación con producto
-    product = db.relationship('Product', backref=db.backref('cart_items', lazy=True))
-
 # Tablas para el dashboard
 class Product(db.Model):
     __tablename__ = 'product'
+    
     idProduct = db.Column(db.Integer, primary_key=True)
     nameProduct = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
@@ -86,11 +83,19 @@ class Product(db.Model):
     status = db.Column(db.Enum('Activo', 'Inactivo'), default='Activo')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relaciones
+    cart_items = db.relationship('CartItem', backref='product', lazy=True)
+    order_details = db.relationship('OrderDetail', backref='product', lazy=True)
+    invoice_items = db.relationship('InvoiceItem', backref='product', lazy=True)
+    variants = db.relationship('ProductVariant', backref='product', lazy=True)
+    additional_images = db.relationship('ProductImage', backref='product', lazy=True)
+
     def __repr__(self):
         return f'<Product {self.nameProduct}>'
 
 class Category(db.Model):
     __tablename__ = 'category'
+    
     idCategory = db.Column(db.Integer, primary_key=True)
     nameCategory = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
@@ -101,28 +106,43 @@ class Category(db.Model):
 
 class Order(db.Model):
     __tablename__ = 'orders'
+    
     idOrder = db.Column(db.Integer, primary_key=True)
-    idUser = db.Column(db.Integer, db.ForeignKey('user.idUser'))
+    idUser = db.Column(db.Integer, db.ForeignKey('user.idUser'), nullable=False)
     totalAmount = db.Column(db.Numeric(10, 2), nullable=False)
     status = db.Column(db.Enum('Pendiente', 'Procesando', 'Enviado', 'Completado', 'Cancelado'), default='Pendiente')
     orderDate = db.Column(db.DateTime, default=datetime.utcnow)
-    user = db.relationship('User', backref=db.backref('orders', lazy=True))
+
+    # Relación con detalles
+    details = db.relationship('OrderDetail', backref='order', lazy=True)
 
     def __repr__(self):
         return f'<Order {self.idOrder}>'
 
 class OrderDetail(db.Model):
     __tablename__ = 'order_detail'
+    
     idOrderDetail = db.Column(db.Integer, primary_key=True)
-    idOrder = db.Column(db.Integer, db.ForeignKey('orders.idOrder'))
-    idProduct = db.Column(db.Integer, db.ForeignKey('product.idProduct'))
+    idOrder = db.Column(db.Integer, db.ForeignKey('orders.idOrder'), nullable=False)
+    idProduct = db.Column(db.Integer, db.ForeignKey('product.idProduct'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
-    order = db.relationship('Order', backref=db.backref('details', lazy=True))
-    product = db.relationship('Product', backref=db.backref('order_details', lazy=True))
 
     def __repr__(self):
         return f'<OrderDetail {self.idOrderDetail}>'
+
+# Modelo para items del carrito
+class CartItem(db.Model):
+    __tablename__ = 'cart_item'
+    
+    idCartItem = db.Column(db.Integer, primary_key=True)
+    idUser = db.Column(db.Integer, db.ForeignKey('user.idUser'), nullable=False)
+    idProduct = db.Column(db.Integer, db.ForeignKey('product.idProduct'), nullable=False)
+    quantity = db.Column(db.Integer, default=1, nullable=False)
+    added_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CartItem User:{self.idUser} Product:{self.idProduct}>'
 
 # NUEVOS MODELOS PARA FACTURAS FÍSICAS
 class Invoice(db.Model):
@@ -167,7 +187,7 @@ class Invoice(db.Model):
         return {
             'id': self.idInvoice,
             'invoice_number': self.invoice_number,
-            'invoice_date': self.invoice_date.isoformat(),
+            'invoice_date': self.invoice_date.isoformat() if self.invoice_date else None,
             'customer_name': self.customer_name,
             'customer_id': self.customer_id,
             'customer_email': self.customer_email,
@@ -177,13 +197,13 @@ class Invoice(db.Model):
             'payment_details': self.payment_details,
             'cash_received': float(self.cash_received) if self.cash_received else 0,
             'change_given': float(self.change_given) if self.change_given else 0,
-            'subtotal': float(self.subtotal),
-            'total_discount': float(self.total_discount),
-            'taxes': float(self.taxes),
-            'total_amount': float(self.total_amount),
+            'subtotal': float(self.subtotal) if self.subtotal else 0,
+            'total_discount': float(self.total_discount) if self.total_discount else 0,
+            'taxes': float(self.taxes) if self.taxes else 0,
+            'total_amount': float(self.total_amount) if self.total_amount else 0,
             'status': self.status,
             'email_sent': self.email_sent,
-            'created_at': self.created_at.isoformat(),
+            'created_at': self.created_at.isoformat() if self.created_at else None,
             'items': [item.to_dict() for item in self.items]
         }
 
@@ -200,9 +220,6 @@ class InvoiceItem(db.Model):
     discount_amount = db.Column(db.Numeric(10, 2), default=0)  # Monto del descuento
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
     
-    # Relación con producto (opcional, para productos del catálogo)
-    product = db.relationship('Product', backref=db.backref('invoice_items', lazy=True))
-    
     def __repr__(self):
         return f'<InvoiceItem {self.product_name} x {self.quantity}>'
     
@@ -210,11 +227,11 @@ class InvoiceItem(db.Model):
         return {
             'id': self.idInvoiceItem,
             'product_name': self.product_name,
-            'product_price': float(self.product_price),
+            'product_price': float(self.product_price) if self.product_price else 0,
             'quantity': self.quantity,
-            'discount': float(self.discount),
-            'discount_amount': float(self.discount_amount),
-            'subtotal': float(self.subtotal),
+            'discount': float(self.discount) if self.discount else 0,
+            'discount_amount': float(self.discount_amount) if self.discount_amount else 0,
+            'subtotal': float(self.subtotal) if self.subtotal else 0,
             'idProduct': self.idProduct
         }
 
@@ -256,6 +273,9 @@ class Color(db.Model):
     status = db.Column(db.Enum('Activo', 'Inactivo'), default='Activo')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relación con variantes
+    variants = db.relationship('ProductVariant', backref='color', lazy=True)
+
     def __repr__(self):
         return f'<Color {self.nameColor}>'
 
@@ -267,6 +287,9 @@ class Size(db.Model):
     category = db.Column(db.String(50))
     status = db.Column(db.Enum('Activo', 'Inactivo'), default='Activo')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relación con variantes
+    variants = db.relationship('ProductVariant', backref='size', lazy=True)
 
     def __repr__(self):
         return f'<Size {self.nameSize}>'
@@ -284,11 +307,6 @@ class ProductVariant(db.Model):
     min_stock = db.Column(db.Integer, default=5)
     status = db.Column(db.Enum('Activo', 'Inactivo'), default='Activo')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relaciones
-    product = db.relationship('Product', backref=db.backref('variants', lazy=True))
-    color = db.relationship('Color', backref=db.backref('variants', lazy=True))
-    size = db.relationship('Size', backref=db.backref('variants', lazy=True))
 
     def __repr__(self):
         return f'<ProductVariant {self.sku}>'
@@ -301,8 +319,14 @@ class ProductImage(db.Model):
     image_url = db.Column(db.String(500), nullable=False)
     is_main = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    product = db.relationship('Product', backref=db.backref('additional_images', lazy=True))
 
     def __repr__(self):
         return f'<ProductImage {self.idImage}>'
+
+# ✅ Métodos de utilidad para la base de datos
+def init_db(app):
+    """Inicializar la base de datos con la aplicación"""
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+        print("✅ Base de datos inicializada correctamente")

@@ -1,9 +1,15 @@
 from app import create_app
+import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 app = create_app()
 
 if __name__ == '__main__':
-    print("🚀 Servidor iniciando en http://0.0.0.0:5000")
+    print("🚀 Servidor iniciando...")
+    print("📍 URL: http://0.0.0.0:5000")
     print("📧 Email configurado:", app.config.get('MAIL_USERNAME'))
     
     # Obtener la URI de BD pero ocultar la contraseña por seguridad
@@ -15,4 +21,7 @@ if __name__ == '__main__':
     else:
         print("🗄️ Base de datos: No configurada")
     
-    app.run(debug=False, host='0.0.0.0', port=5000)
+    debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
+    print(f"🐛 Modo Debug: {debug_mode}")
+    
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
