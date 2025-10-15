@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
-# ✅ ELIMINADA la importación circular: from app.models import Product
 import os
 
 # 👇 Agregar estas dos líneas
@@ -19,20 +18,28 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     
-    # 🔒 CONFIGURACIÓN BÁSICA
-    app.config['SECRET_KEY'] = 'tu-clave-secreta-muy-segura-aqui'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/fashion_boutique'
+    # 🔒 CONFIGURACIÓN BÁSICA CON VARIABLES DE ENTORNO
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'clave-secreta-por-defecto-cambiar-en-produccion')
+    
+    # ✅ CONFIGURACIÓN DE BD CON VARIABLES DE ENTORNO (PARA PRODUCCIÓN)
+    db_host = os.getenv('DB_HOST', 'localhost')
+    db_user = os.getenv('DB_USER', 'root')
+    db_password = os.getenv('DB_PASSWORD', '')
+    db_name = os.getenv('DB_NAME', 'fashion_boutique')
+    db_port = os.getenv('DB_PORT', '3306')
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     
-    # 📧 CONFIGURACIÓN DE GMAIL
+    # 📧 CONFIGURACIÓN DE GMAIL CON VARIABLES DE ENTORNO
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USE_SSL'] = False
-    app.config['MAIL_USERNAME'] = 'davidsaavedrapinzon13@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'unxz cjlb vuwe ofzm'
-    app.config['MAIL_DEFAULT_SENDER'] = 'davidsaavedrapinzon13@gmail.com'
+    app.config['MAIL_USERNAME'] = os.getenv('GMAIL_USER', 'davidsaavedrapinzon13@gmail.com')
+    app.config['MAIL_PASSWORD'] = os.getenv('GMAIL_APP_PASSWORD', '')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('GMAIL_USER', 'davidsaavedrapinzon13@gmail.com')
     
     # Inicializar extensiones con la app
     db.init_app(app)
@@ -53,24 +60,29 @@ def create_app():
     
     # ✅ CORREGIDO: Crear tablas pero NO crear admin todavía (por el problema de created_at)
     with app.app_context():
-        db.create_all()
-        
-        # ✅ SOLUCIÓN: Verificar si la columna created_at existe antes de crear el admin
         try:
-            admin_user = db.session.query(User).filter_by(emailUser='admin@fashion.com').first()
-            if not admin_user:
-                admin = User(
-                    nameUser='admin',
-                    emailUser='admin@fashion.com',
-                    is_admin=True
-                )
-                admin.set_password('admin123')
-                db.session.add(admin)
-                db.session.commit()
-                print("✅ Administrador creado: admin@fashion.com / admin123")
+            db.create_all()
+            
+            # ✅ SOLUCIÓN: Verificar si la columna created_at existe antes de crear el admin
+            try:
+                admin_user = db.session.query(User).filter_by(emailUser='admin@fashion.com').first()
+                if not admin_user:
+                    admin = User(
+                        nameUser='admin',
+                        emailUser='admin@fashion.com',
+                        is_admin=True
+                    )
+                    admin.set_password('admin123')
+                    db.session.add(admin)
+                    db.session.commit()
+                    print("✅ Administrador creado: admin@fashion.com / admin123")
+            except Exception as e:
+                print(f"⚠️  No se pudo crear el admin: {e}")
+                print("💡 Ejecuta: flask db migrate && flask db upgrade")
+                
         except Exception as e:
-            print(f"⚠️  No se pudo crear el admin: {e}")
-            print("💡 Ejecuta: flask db migrate && flask db upgrade")
+            print(f"❌ Error al conectar con la base de datos: {e}")
+            print("💡 Verifica las variables de entorno DB_HOST, DB_USER, DB_PASSWORD, DB_NAME")
     
     # ✅ RUTA PRINCIPAL - Página de inicio con todos los productos
     @app.route('/')
