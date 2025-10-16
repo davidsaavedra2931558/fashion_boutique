@@ -5,10 +5,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    volumes:
-      - .:/app
-      - db_volume:/app  # Persistencia específica para el .db (opcional, pero recomendado)
     environment:
-      - APP_NAME=${APP_NAME} 
-volumes:
-  db_volume:  # Volumen para persistir el .db
+      - FLASK_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    restart: unless-stopped
+    # Elimina el volumes: para producción (causa problemas)
