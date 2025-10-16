@@ -61,45 +61,44 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
     
-# ✅ CORREGIDO: Manejo mejorado de la creación de tablas
-with app.app_context():
-    try:
-        # Probar conexión primero - FORMA CORRECTA
-        from sqlalchemy import text
-        db.session.execute(text('SELECT 1'))
-        print("✅ Conexión a la base de datos exitosa!")
-        
-        # Crear todas las tablas
-        db.create_all()
-        print("✅ Tablas creadas/verificadas correctamente")
-        
-        # Crear usuario admin si no existe
+    # ✅ CORREGIDO: Manejo mejorado de la creación de tablas
+    with app.app_context():
         try:
-            admin_user = User.query.filter_by(emailUser='admin@fashion.com').first()
-            if not admin_user:
-                admin = User(
-                    nameUser='admin',
-                    emailUser='admin@fashion.com',
-                    is_admin=True
-                )
-                admin.set_password('admin123')
-                db.session.add(admin)
-                db.session.commit()
-                print("✅ Administrador creado: admin@fashion.com / admin123")
-            else:
-                print("✅ Usuario administrador ya existe")
-                
-        except Exception as admin_error:
-            print(f"⚠️  No se pudo crear el admin: {admin_error}")
-            db.session.rollback()
+            # Probar conexión primero
+            db.session.execute('SELECT 1')
+            print("✅ Conexión a la base de datos exitosa!")
             
-    except Exception as e:
-        print(f"❌ Error al conectar con la base de datos: {e}")
-        print("💡 Verifica:")
-        print("   - Las credenciales de la base de datos")
-        print("   - Que el servidor MySQL esté corriendo")
-        print("   - Que la base de datos exista")
-        
+            # Crear todas las tablas
+            db.create_all()
+            print("✅ Tablas creadas/verificadas correctamente")
+            
+            # Crear usuario admin si no existe
+            try:
+                admin_user = User.query.filter_by(emailUser='admin@fashion.com').first()
+                if not admin_user:
+                    admin = User(
+                        nameUser='admin',
+                        emailUser='admin@fashion.com',
+                        is_admin=True
+                    )
+                    admin.set_password('admin123')
+                    db.session.add(admin)
+                    db.session.commit()
+                    print("✅ Administrador creado: admin@fashion.com / admin123")
+                else:
+                    print("✅ Usuario administrador ya existe")
+                    
+            except Exception as admin_error:
+                print(f"⚠️  No se pudo crear el admin: {admin_error}")
+                db.session.rollback()
+                
+        except Exception as e:
+            print(f"❌ Error al conectar con la base de datos: {e}")
+            print("💡 Verifica:")
+            print("   - Las credenciales de la base de datos")
+            print("   - Que el servidor MySQL esté corriendo")
+            print("   - Que la base de datos exista")
+    
     # ✅ RUTA PRINCIPAL - Página de inicio con todos los productos
     @app.route('/')
     def index():
