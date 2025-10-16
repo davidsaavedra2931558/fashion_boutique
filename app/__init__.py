@@ -172,7 +172,7 @@ def create_app():
         app.register_blueprint(auth_bp)
         app.register_blueprint(users_bp)
         app.register_blueprint(dashboard_bp)
-        app.register_blueprint(products_bp)
+        app.register_blueprint(products_bp, url_prefix='/products')  # ✅ AGREGADO url_prefix
         app.register_blueprint(cart_bp)
         
         print("✅ Todos los blueprints registrados correctamente")
@@ -182,4 +182,4 @@ def create_app():
     except Exception as e:
         print(f"⚠️  Error al registrar blueprints: {e}")
     
-    return app
+    return app  # ✅ ESTE return DEBE ESTAR AL FINAL Y CON LA MISMA INDENTACIÓN QUE def create_app():
