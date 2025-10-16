@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -10,8 +9,10 @@ from urllib.parse import quote_plus
 import pymysql
 pymysql.install_as_MySQLdb()
 
-# Inicializar extensiones PRIMERO
-db = SQLAlchemy()
+# ✅ CORREGIDO: Importar db desde models1 en lugar de crear nueva instancia
+from app.models1 import db
+
+# Inicializar otras extensiones
 login_manager = LoginManager()
 mail = Mail()
 migrate = Migrate()
@@ -43,8 +44,8 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv('EMAIL_PASS', 'unxz cjlb vuwe ofzm')
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv('EMAIL_USER', 'davidsaavedrapinzon13@gmail.com')
     
-    # Inicializar extensiones con la app
-    db.init_app(app)
+    # ✅ Inicializar extensiones con la app
+    db.init_app(app)  # ✅ Ahora usa la misma instancia que models1.py
     login_manager.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
@@ -63,8 +64,9 @@ def create_app():
     # ✅ CORREGIDO: Manejo mejorado de la creación de tablas
     with app.app_context():
         try:
-            # Probar conexión primero
-            db.session.execute('SELECT 1')
+            # Probar conexión primero - FORMA CORRECTA
+            from sqlalchemy import text
+            db.session.execute(text('SELECT 1'))
             print("✅ Conexión a la base de datos exitosa!")
             
             # Crear todas las tablas
@@ -97,7 +99,7 @@ def create_app():
             print("   - Las credenciales de la base de datos")
             print("   - Que el servidor MySQL esté corriendo")
             print("   - Que la base de datos exista")
-    
+            
     # ✅ RUTA PRINCIPAL - Página de inicio con todos los productos
     @app.route('/')
     def index():

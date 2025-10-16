@@ -2524,11 +2524,111 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
 
-     <div id="configuracion" class="content-section">
-            <h2>Configuración del Sistema</h2>
-            <p>Contenido de la sección de configuración...</p>
+ <!-- Configuración Section -->
+<div id="configuracion" class="content-section">
+    <div class="container-fluid px-4">
+        <h2 class="mb-4">Configuración del Sistema</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Configuración de la Tienda</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la Tienda</label>
+                            <input type="text" class="form-control" value="Fashion Boutique">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">NIT/RUC</label>
+                            <input type="text" class="form-control" value="900.123.456-7">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <textarea class="form-control" rows="2">Cra 45 #26-85, Medellín</textarea>
+                        </div>
+                        <button class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Configuración de Facturación</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Resolución DIAN</label>
+                            <input type="text" class="form-control" value="18764000000001">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prefijo Factura</label>
+                            <input type="text" class="form-control" value="FACT">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Número Inicial</label>
+                            <input type="number" class="form-control" value="1">
+                        </div>
+                        <button class="btn btn-primary">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-printer me-2"></i>Configuración de Impresión</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="printAuto" checked>
+                            <label class="form-check-label" for="printAuto">Impresión Automática</label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="printCopy" checked>
+                            <label class="form-check-label" for="printCopy">Imprimir Copia Cliente</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tamaño de Papel</label>
+                            <select class="form-select">
+                                <option>Térmico 80mm</option>
+                                <option>A4</option>
+                                <option>Carta</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notificaciones</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="notifStock" checked>
+                            <label class="form-check-label" for="notifStock">Alertas de Stock Bajo</label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="notifSales" checked>
+                            <label class="form-check-label" for="notifSales">Resumen de Ventas Diarias</label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="notifOrders">
+                            <label class="form-check-label" for="notifOrders">Notificaciones de Pedidos Online</label>
+                        </div>
+                        <button class="btn btn-primary">Guardar Preferencias</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+  
         
 
     <!-- Bootstrap JS -->
