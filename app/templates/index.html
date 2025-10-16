@@ -1116,95 +1116,121 @@
 
   
     <!-- Products Section -->
-    <section class="products-section" id="productos">
-        <div class="products-header">
-            <h2 class="section-title" style="margin-bottom: 0;">COLECCIÓN DESTACADA</h2>
-            <div class="filters">
-                <span style="font-weight: 500; color: var(--dark-gray);">{{ products|length }} PRODUCTOS</span>
-                <select class="filter-select">
-                    <option>ORDENAR POR</option>
-                    <option>Precio: Menor a Mayor</option>
-                    <option>Precio: Mayor a Menor</option>
-                    <option>Nombre A-Z</option>
-                    <option>Nombre Z-A</option>
-                </select>
-                <div class="view-options">
-                    <button class="view-btn active"><i class="fas fa-th"></i></button>
-                    <button class="view-btn"><i class="fas fa-list"></i></button>
-                </div>
+<section class="products-section" id="productos">
+    <div class="products-header">
+        <h2 class="section-title" style="margin-bottom: 0;">COLECCIÓN DESTACADA</h2>
+        <div class="filters">
+            <span style="font-weight: 500; color: var(--dark-gray);">{{ products|length }} PRODUCTOS</span>
+            <select class="filter-select">
+                <option>ORDENAR POR</option>
+                <option>Precio: Menor a Mayor</option>
+                <option>Precio: Mayor a Menor</option>
+                <option>Nombre A-Z</option>
+                <option>Nombre Z-A</option>
+            </select>
+            <div class="view-options">
+                <button class="view-btn active"><i class="fas fa-th"></i></button>
+                <button class="view-btn"><i class="fas fa-list"></i></button>
             </div>
         </div>
+    </div>
 
-        <div class="products-grid">
-            {% for product in products %}
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="{{ product.image or product.image_url or 'https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
-                         alt="{{ product.nameProduct or product.name }}"
-                         onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
-                    
-                    {% if loop.index <= 2 %}
-                    <div class="product-badge">SALE</div>
-                    {% endif %}
-                    
-                    <div class="product-overlay">
-                        <div class="product-actions">
-                            {% set product_id = product.idProduct if product.idProduct is defined else product.id %}
-                            <a href="{{ url_for('products.product_detail', product_id=product_id) if product_id else '#' }}" class="product-action-btn">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <button class="product-action-btn" onclick="addToCart({{ product_id }})" {% if (product.stock or 0) <= 0 %}disabled{% endif %}>
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">{{ product.nameProduct or product.name }}</h3>
-                    <p class="product-category">{{ product.category or 'Sin categoría' }}</p>
-                    
-                    <div class="product-price">
-                        {% set price = product.price | float %}
-                        {% if loop.index <= 2 %}
-                            <span class="old-price">${{ "%.2f"|format(price * 1.5) }}</span>
-                            <span class="sale-price">${{ "%.2f"|format(price) }}</span>
-                        {% else %}
-                            ${{ "%.2f"|format(price) }}
-                        {% endif %}
-                    </div>
-                    
-                    <div class="product-stock {% if (product.stock or 0) <= 0 %}out-of-stock{% endif %}">
-                        {% if (product.stock or 0) > 0 %}
-                            {{ product.stock }} disponibles
-                        {% else %}
-                            Agotado
-                        {% endif %}
-                    </div>
-                    
-                    <div class="product-buttons">
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <img src="{{ product.image or product.image_url or 'https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
+                     alt="{{ product.nameProduct or product.name }}"
+                     onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                
+                {% if loop.index <= 2 %}
+                <div class="product-badge">SALE</div>
+                {% endif %}
+                
+                <div class="product-overlay">
+                    <div class="product-actions">
                         {% set product_id = product.idProduct if product.idProduct is defined else product.id %}
-                        <a href="{{ url_for('products.product_detail', product_id=product_id) if product_id else '#' }}" class="btn btn-outline btn-sm">
-                            <i class="fas fa-eye"></i> Detalles
+                        <a href="{{ url_for('products.product_detail', product_id=product_id) }}" class="product-action-btn">
+                            <i class="fas fa-eye"></i>
                         </a>
-                        {% if (product.stock or 0) > 0 %}
-                        <button class="btn btn-primary btn-sm" onclick="addToCart({{ product_id }})">
-                            <i class="fas fa-cart-plus"></i> Añadir
+                        <button class="product-action-btn" onclick="addToCart({{ product_id }})" {% if (product.stock or 0) <= 0 %}disabled{% endif %}>
+                            <i class="fas fa-shopping-cart"></i>
                         </button>
-                        {% else %}
-                        <button class="btn btn-outline btn-sm" disabled>
-                            <i class="fas fa-times"></i> Agotado
-                        </button>
-                        {% endif %}
                     </div>
                 </div>
             </div>
-            {% else %}
-            <div class="col-12 text-center py-5">
-                <h4>No hay productos disponibles</h4>
-                <p class="text-muted">Pronto tendremos nuevos productos en stock</p>
+            <div class="product-info">
+                <h3 class="product-title">{{ product.nameProduct or product.name }}</h3>
+                <p class="product-category">{{ product.category or 'Sin categoría' }}</p>
+                
+                <div class="product-price">
+                    {% set price = product.price | float %}
+                    {% if loop.index <= 2 %}
+                        <span class="old-price">${{ "%.2f"|format(price * 1.5) }}</span>
+                        <span class="sale-price">${{ "%.2f"|format(price) }}</span>
+                    {% else %}
+                        ${{ "%.2f"|format(price) }}
+                    {% endif %}
+                </div>
+                
+                <div class="product-stock {% if (product.stock or 0) <= 0 %}out-of-stock{% endif %}">
+                    {% if (product.stock or 0) > 0 %}
+                        {{ product.stock }} disponibles
+                    {% else %}
+                        Agotado
+                    {% endif %}
+                </div>
+                
+                <div class="product-buttons">
+                    {% set product_id = product.idProduct if product.idProduct is defined else product.id %}
+                    <a href="{{ url_for('products.product_detail', product_id=product_id) }}" class="btn btn-outline btn-sm">
+                        <i class="fas fa-eye"></i> Detalles
+                    </a>
+                    {% if (product.stock or 0) > 0 %}
+                    <button class="btn btn-primary btn-sm" onclick="addToCart({{ product_id }})">
+                        <i class="fas fa-cart-plus"></i> Añadir
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline btn-sm" disabled>
+                        <i class="fas fa-times"></i> Agotado
+                    </button>
+                    {% endif %}
+                </div>
             </div>
-            {% endfor %}
         </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <h4>No hay productos disponibles</h4>
+            <p class="text-muted">Pronto tendremos nuevos productos en stock</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if total_pages and total_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            {% for page_num in range(1, total_pages + 1) %}
+                <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if not has_next %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+</section>
 
         <!-- Paginación -->
         {% if total_pages and total_pages > 1 %}
